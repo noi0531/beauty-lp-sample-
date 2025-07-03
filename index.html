@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>美容機器LP（完全修正版）</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -440,21 +440,18 @@
 .custom-heading {
   display: flex;
   justify-content: center;
-  align-items: flex-end;
-  flex-wrap: nowrap;
-  gap: 0.3em;
-  margin: 0;
-  opacity: 0;
-  animation: fadeIn 2s forwards;
-  flex-shrink: 1;
-  flex-grow: 1;
-  min-width: 0;
-  max-width: 100%;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.2em;
+  width: 100%;
+  text-align: center;
   overflow-wrap: anywhere;
-  line-height: 1.1;
+  word-break: break-word;
+  margin: 0 auto;
 }
 
-.big-text {
+.big-text,
+.ultimate {
   font-size: clamp(2.8rem, 6vw, 5.5rem);
   font-family: 'Playfair Display', serif;
   font-weight: 800;
@@ -463,7 +460,12 @@
   -webkit-text-fill-color: transparent;
   border-bottom: 2px solid #f8e7ac;
   padding-bottom: 4px;
-  white-space: nowrap;
+  white-space: normal;
+}
+
+.ultimate {
+  background: linear-gradient(90deg, #ffef8b, #f6d043);
+  border-bottom: 2px solid #f6d043;
 }
 
 .small-text {
@@ -471,27 +473,11 @@
   background: linear-gradient(90deg, #e6c56e, #f8e7ac);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  white-space: nowrap;
+  white-space: normal;
 }
 
-.ultimate {
-  font-size: clamp(2.8rem, 6vw, 5.5rem);
-  background: linear-gradient(90deg, #ffef8b, #f6d043);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  border-bottom: 2px solid #f6d043;
-  padding-bottom: 4px;
-  white-space: nowrap;
-}
-
+/* スマホ用 */
 @media (max-width: 768px) {
-  .custom-heading {
-    flex-direction: column;
-    align-items: center;
-    line-height: 1.3;
-    gap: 0.4em;
-  }
-
   .big-text,
   .ultimate {
     font-size: 2rem;
@@ -499,30 +485,6 @@
 
   .small-text {
     font-size: 1.2rem;
-  }
-}
-@media (max-width: 768px) {
-  .custom-heading {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: baseline;
-    gap: 0.3em;
-    width: 100%;
-    text-align: center;
-    margin: 0 auto;
-  }
-
-  .big-text,
-  .ultimate {
-    font-size: 2rem;
-    white-space: normal;
-    flex-shrink: 1;
-  }
-
-  .small-text {
-    font-size: 1.2rem;
-    white-space: normal;
   }
 }
 
