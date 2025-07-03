@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>美容機器LP（完全修正版）</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      background: #fff;
+      color: #333;
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+.bg-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('https://noi0531.github.io/beauty-lp-sample-/images/a.png') center/cover no-repeat;
+  filter: blur(0px);
+  opacity: 1;
+  z-index: -3;
+  pointer-events: none;
+}
+    .white-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      opacity: 0;
+      z-index: -2;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .dark-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      opacity: 0;
+      z-index: -1;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    header {
+      position: relative;
+      background: url('https://images.unsplash.com/photo-1600498743512-1b5e79b3c2df?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&h=900&q=80') no-repeat center center/cover;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+    .header-overlay {
+      background: rgba(0,0,0,0.5);
+      padding: 60px 40px;
+      border-radius: 10px;
+      display: inline-block;
+      max-width: 90%;
+    }
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 800;
+      font-size: clamp(3rem, 8vw, 6rem);
+      background: linear-gradient(90deg, #e6c56e, #f8e7ac);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+      opacity: 0;
+      animation: fadeIn 2s forwards;
+      margin: 0;
+      line-height: 1.2;
+    }
+    header h1 .highlight {
+      background: linear-gradient(90deg, #ffef8b, #f6d043);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 1.4em;
+      letter-spacing: 2px;
+      text-shadow: 3px 3px 8px rgba(0,0,0,0.5);
+      border-bottom: 2px solid #f6d043;
+      padding-bottom: 4px;
+    }
+    header p {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: clamp(1.4rem, 4vw, 3rem);
+      color: #fff8dc;
+      opacity: 0;
+      animation: fadeIn 2.5s forwards;
+      animation-delay: 0.5s;
+      margin-top: 30px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+    }
+    section {
+      max-width: 1000px;
+      margin: 60px auto;
+      padding: 20px;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 1s ease;
+    }
+    section.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .highlight {
+      font-family: 'Lora', serif;
+      font-size: 2.2rem;
+      color: #e91e63;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .product-list {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .product {
+      width: 250px;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      text-align: center;
+      padding: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .product:hover {
+      transform: scale(1.1);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    }
+    .product img {
+      width: 100%;
+      height: auto;
+    }
+    .product h3 {
+      color: #e91e63;
+      margin: 10px 0 5px;
+    }
+    .product p {
+      margin: 5px 0;
+    }
+    .product button {
+      background: linear-gradient(45deg, #e91e63, #f48fb1);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      margin: 5px 5px 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: all 0.3s;
+    }
+    .product button:hover {
+      background: linear-gradient(45deg, #d81b60, #f06292);
+    }
+    .details {
+      display: none;
+      background: #f0f0f0;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    .comparison table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .comparison th, .comparison td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    .factory-info img {
+      width: 100%;
+      max-width: 800px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    .factory-info p {
+      font-size: 1.2rem;
+      line-height: 1.8;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 10px;
+      color: #555;
+    }
+    .faq details {
+      margin-bottom: 15px;
+    }
+    .faq summary {
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .fixed-buttons {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      z-index: 999;
+    }
+.fixed-buttons a {
+  display: inline-block;
+  background: linear-gradient(45deg, #ff3d77, #ff7eb9);
+  color: #fff;
+  text-decoration: none;
+  padding: 24px 40px;
+  border-radius: 50px;
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: bold;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+  transition: all 0.3s;
+}
+    .fixed-buttons a:hover {
+      transform: scale(1.15);
+      background: linear-gradient(135deg, #d81b60, #f06292);
+    }
+    .fixed-buttons a.line {
+      background: linear-gradient(135deg, #00c300, #66ff66);
+    }
+    .fixed-buttons a.doc {
+      background: linear-gradient(135deg, #333, #777);
+    }
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 600px;
+      width: 90%;
+      overflow-y: auto;
+      max-height: 90vh;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .modal-content h2 {
+      color: #e91e63;
+      margin-top: 0;
+      text-align: center;
+    }
+    .close {
+      float: right;
+      font-size: 24px;
+      cursor: pointer;
+      color: #e91e63;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .form-group .checkboxes label {
+      display: inline-block;
+      margin-right: 15px;
+      font-weight: normal;
+    }
+    .form-group button {
+      background: linear-gradient(45deg, #e91e63, #f48fb1);
+      color: #fff;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: all 0.3s;
+    }
+    .form-group button:hover {
+      background: linear-gradient(45deg, #d81b60, #f06292);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+      <style>
+  /* すでにあるCSSの下に追記 */
+
+  .support-section {
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+  }
+
+  .support-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("https://noi0531.github.io/beauty-lp-sample-/images/image0.jpeg") center/cover no-repeat;
+    filter: brightness(1.2);
+
+    z-index: -1;
+    transform: scale(1.1);
+  }
+
+  .support-content {
+    position: relative;
+    padding: 60px 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .support-content ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .support-content li {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+  }
+  </style>
+</head>
+<body>
+  <div class="bg-image"></div>
+  <div class="white-overlay"></div>
+  <div class="dark-overlay"></div>
+
+  <header>
+    <div class="header-overlay">
+      <h1><span class="highlight">美</span>というインフラの<span class="highlight">究極系</span>。</h1>
+      <p>相場の半額近い値段で夢のプロ機器を身近に。</p>
+    </div>
+  </header>
+
+  <section>
+    <div class="highlight">製品ラインナップ</div>
+    <div class="product-list">
+      <div class="product">
+        <img src="https://source.unsplash.com/250x180/?beauty-machine" alt="製品1">
+        <h3>美容機器A</h3>
+        <p>¥1,800,000（税込）</p>
+        <p>最新脱毛技術搭載</p>
+        <button onclick="addToCart('美容機器A')">見積もりカートに追加</button>
+        <button onclick="toggleDetails(this)">詳細を見る</button>
+        <div class="details">美容機器Aの詳細説明がここに表示されます。</div>
+      </div>
+      <div class="product">
+        <img src="https://source.unsplash.com/250x180/?spa" alt="製品2">
+        <h3>美容機器B</h3>
+        <p>¥1,800,000（税込）</p>
+        <p>フェイシャル施術対応</p>
+        <button onclick="addToCart('美容機器B')">見積もりカートに追加</button>
+        <button onclick="toggleDetails(this)">詳細を見る</button>
+        <div class="details">美容機器Bの詳細説明がここに表示されます。</div>
+      </div>
+      <div class="product">
+        <img src="https://source.unsplash.com/250x180/?salon" alt="製品3">
+        <h3>美容機器C</h3>
+        <p>¥1,800,000（税込）</p>
+        <p>省スペース設計</p>
+        <button onclick="addToCart('美容機器C')">見積もりカートに追加</button>
+        <button onclick="toggleDetails(this)">詳細を見る</button>
+        <div class="details">美容機器Cの詳細説明がここに表示されます。</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="comparison">
+    <div class="highlight">他社との製品比較</div>
+    <table>
+      <tr>
+        <th>製品名</th>
+        <th>価格</th>
+        <th>機能</th>
+        <th>保証</th>
+      </tr>
+      <tr>
+        <td>当社製品</td>
+        <td>180万円</td>
+        <td>脱毛/フェイシャル</td>
+        <td>3年</td>
+      </tr>
+      <tr>
+        <td>他社A</td>
+        <td>400万円</td>
+        <td>脱毛のみ</td>
+        <td>1年</td>
+      </tr>
+      <tr>
+        <td>他社B</td>
+        <td>350万円</td>
+        <td>フェイシャルのみ</td>
+        <td>1年</td>
+      </tr>
+    </table>
+  </section>
+  <section>
+    <div class="highlight">低価格の仕組み</div>
+    <div class="factory-info">
+      <img src="https://source.unsplash.com/800x400/?factory,manufacturing" alt="工場写真">
+      <p>
+        長年取引のある提携工場と親密な関係を築き、高品質な美容機器を低価格でご提供しています。<br>
+        中間マージンを徹底排除し、お客様に直接お届けすることで業界相場の約半額を実現しました。
+      </p>
+    </div>
+  </section>
+
+ <section class="support-section">
+  <div class="support-bg"></div>
+  <div class="support-content">
+    <div class="highlight">購入者サポート</div>
+    <ul>
+      <li>SNS集客講習</li>
+      <li>無料HP作成</li>
+    </ul>
+  </div>
+</section>
+
+  <section>
+    <div class="highlight">Before / After</div>
+    <div class="img-block">
+      <img src="https://source.unsplash.com/800x400/?face-treatment" alt="before after">
+      <p>導入前後の結果例です。効果には個人差があります。</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="highlight">こんなサロン様におすすめ</div>
+    <form>
+      <label><input type="checkbox"> 開業予定の方</label><br>
+      <label><input type="checkbox"> 売上アップを目指す方</label><br>
+      <label><input type="checkbox"> SNS運用が苦手な方</label><br>
+    </form>
+  </section>
+
+  <section>
+    <div class="highlight">製品以外のサービス紹介</div>
+    <ul>
+      <li>美容液・パックなどの商材販売</li>
+      <li>SNSアカウント作成代行</li>
+      <li>HP作成・集客講習</li>
+      <li>顧客管理システム</li>
+      <li>サロン出店支援サービス</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="highlight">よくある質問</div>
+    <div class="faq">
+      <details>
+        <summary>ローン審査は厳しいですか？</summary>
+        <p>個人事業主様も多く通過されています。</p>
+      </details>
+      <details>
+        <summary>納期はどのくらいですか？</summary>
+        <p>最短1週間で発送可能です。</p>
+      </details>
+    </div>
+  </section>
+
+  <div class="fixed-buttons">
+    <a onclick="openModal('estimateModal')" id="estimateBtn">見積もり依頼はこちら (0)</a>
+    <a href="https://line.me/ti/p/your_line_id" target="_blank" class="line">LINEで相談</a>
+    <a onclick="openModal('documentModal')" class="doc">資料請求</a>
+  </div>
+
+  <!-- 見積もりモーダル -->
+  <div id="estimateModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('estimateModal')">&times;</span>
+      <h2>見積もり依頼フォーム</h2>
+      <div class="cart-items" id="cartItems"></div>
+      <form id="estimateForm">
+        <div class="form-group">
+          <label>サロン名</label>
+          <input type="text" name="salon" required>
+        </div>
+        <div class="form-group">
+          <label>個人名</label>
+          <input type="text" name="name" required>
+        </div>
+        <div class="form-group">
+          <label>メールアドレス</label>
+          <input type="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label>電話番号</label>
+          <input type="tel" name="phone">
+        </div>
+        <div class="form-group">
+          <label>その他サービスの検討有無</label>
+          <div class="checkboxes">
+            <label><input type="checkbox" name="services" value="商材購入"> 商材購入</label>
+            <label><input type="checkbox" name="services" value="SNS代行"> SNS代行</label>
+            <label><input type="checkbox" name="services" value="HP作成"> HP作成</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>備考欄</label>
+          <textarea name="note" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <button type="submit">送信する</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 資料請求モーダル -->
+  <div id="documentModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('documentModal')">&times;</span>
+      <h2>資料請求フォーム</h2>
+      <form id="documentForm">
+        <div class="form-group">
+          <label>サロン名</label>
+          <input type="text" name="salon" required>
+        </div>
+        <div class="form-group">
+          <label>個人名</label>
+          <input type="text" name="name" required>
+        </div>
+        <div class="form-group">
+          <label>メールアドレス</label>
+          <input type="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label>電話番号</label>
+          <input type="tel" name="phone">
+        </div>
+        <div class="form-group">
+          <label>資料請求する機器</label>
+          <div class="checkboxes">
+            <label><input type="checkbox" name="machine" value="美容機器A"> 美容機器A</label>
+            <label><input type="checkbox" name="machine" value="美容機器B"> 美容機器B</label>
+            <label><input type="checkbox" name="machine" value="美容機器C"> 美容機器C</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>その他サービスの検討有無</label>
+          <div class="checkboxes">
+            <label><input type="checkbox" name="services" value="商材購入"> 商材購入</label>
+            <label><input type="checkbox" name="services" value="SNS代行"> SNS代行</label>
+            <label><input type="checkbox" name="services" value="HP作成"> HP作成</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>備考欄</label>
+          <textarea name="note" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <button type="submit">送信する</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 美容機器販売プロジェクト
+  </footer>
+
+  <script>
+    let cart = [];
+    function addToCart(item) {
+      cart.push(item);
+      document.getElementById('estimateBtn').textContent =
+        `見積もり依頼はこちら (${cart.length})`;
+      alert(item + " をカートに追加しました！");
+    }
+    function toggleDetails(btn) {
+      const details = btn.nextElementSibling;
+      details.style.display =
+        details.style.display === 'block' ? 'none' : 'block';
+    }
+    function openModal(id) {
+      if (id === 'estimateModal') {
+        let html = cart.length
+          ? '<ul><li>' + cart.join('</li><li>') + '</li></ul>'
+          : 'カートは空です。';
+        document.getElementById('cartItems').innerHTML = html;
+      }
+      document.getElementById(id).style.display = 'flex';
+    }
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+    document.getElementById('estimateForm')?.addEventListener('submit', e => {
+      e.preventDefault();
+      alert('見積もり依頼を送信しました！');
+      closeModal('estimateModal');
+    });
+    document.getElementById('documentForm')?.addEventListener('submit', e => {
+      e.preventDefault();
+      alert('資料請求を送信しました！');
+      closeModal('documentModal');
+    });
+
+    // IntersectionObserverでセクションをフェードイン
+    const sections = document.querySelectorAll('section');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+        }
+      });
+    }, { threshold: 0.3 });
+    sections.forEach(sec => observer.observe(sec));
+
+    // スクロールによる背景ブラーとオーバーレイ
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.body.scrollHeight - window.innerHeight;
+      const ratio = docHeight > 0 ? Math.min(scrollTop / docHeight, 1) : 0;
+      const blurValue = ratio * 20;
+      const whiteOpacity = ratio === 0 ? 0 : ratio * 0.2;
+      const darkOpacity = ratio === 0 ? 0 : ratio * 0.2;
+      document.querySelector('.bg-image').style.filter = `blur(${blurValue}px)`;
+      document.querySelector('.white-overlay').style.opacity = whiteOpacity.toFixed(2);
+      document.querySelector('.dark-overlay').style.opacity = darkOpacity.toFixed(2);
+    });
+  </script>
+</body>
+</html>
