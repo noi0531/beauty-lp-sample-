@@ -418,20 +418,37 @@
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  flex-wrap: nowrap; /* ← ここが重要！ */
-  gap: 0.5em;
+  flex-wrap: nowrap;
+  gap: 0.3em;
   margin: 0;
   opacity: 0;
   animation: fadeIn 2s forwards;
+  flex-shrink: 1;
+  flex-grow: 1;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
-.custom-heading span {
-  display: inline-block;
-  line-height: 1;
+.custom-heading {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  flex-wrap: nowrap;
+  gap: 0.3em;
+  margin: 0;
+  opacity: 0;
+  animation: fadeIn 2s forwards;
+  flex-shrink: 1;
+  flex-grow: 1;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  line-height: 1.1;
 }
 
 .big-text {
-  font-size: clamp(3.5rem, 8vw, 6rem);
+  font-size: clamp(2.8rem, 6vw, 5.5rem);
   font-family: 'Playfair Display', serif;
   font-weight: 800;
   background: linear-gradient(90deg, #e6c56e, #f8e7ac);
@@ -439,26 +456,38 @@
   -webkit-text-fill-color: transparent;
   border-bottom: 2px solid #f8e7ac;
   padding-bottom: 4px;
+  white-space: nowrap;
 }
 
 .small-text {
-  font-size: clamp(2.2rem, 4vw, 3.2rem);
-  font-family: 'Playfair Display', serif;
-  font-weight: 800;
+  font-size: clamp(1.5rem, 2.5vw, 2.2rem);
   background: linear-gradient(90deg, #e6c56e, #f8e7ac);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  align-self: flex-end;
+  white-space: nowrap;
 }
 
 .ultimate {
-  border-bottom: 2px solid #f6d043;
+  font-size: clamp(2.8rem, 6vw, 5.5rem);
   background: linear-gradient(90deg, #ffef8b, #f6d043);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  letter-spacing: 2px;
+  border-bottom: 2px solid #f6d043;
   padding-bottom: 4px;
-}     
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .big-text,
+  .ultimate {
+    font-size: 2.2rem;
+  }
+
+  .small-text {
+    font-size: 1.2rem;
+  }
+}
+
  </style>
 </head>
 <body>
