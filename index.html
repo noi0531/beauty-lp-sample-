@@ -204,26 +204,33 @@
       font-weight: bold;
     }
     .fixed-buttons {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 20px;
-      z-index: 999;
-    }
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap; /* ここを追加 */
+  z-index: 999;
+  max-width: 95%;
+}
+
 .fixed-buttons a {
   display: inline-block;
   background: linear-gradient(45deg, #ff3d77, #ff7eb9);
   color: #fff;
   text-decoration: none;
-  padding: 24px 40px;
+  padding: 16px 24px; /* 少し小さくする */
   border-radius: 50px;
   text-align: center;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: bold;
   box-shadow: 0 8px 25px rgba(0,0,0,0.5);
   transition: all 0.3s;
+  white-space: nowrap;
+  flex-grow: 1;          /* 幅を揃えやすくする */
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
     .fixed-buttons a:hover {
       transform: scale(1.15);
