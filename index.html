@@ -61,6 +61,7 @@
       padding: 20px;
     }
     .header-overlay {
+    　text-align: center;
       background: rgba(0,0,0,0.5);
       padding: 60px 40px;
       border-radius: 10px;
@@ -203,62 +204,54 @@
       cursor: pointer;
       font-weight: bold;
     }
-    .fixed-buttons {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap; /* ここを追加 */
-  z-index: 999;
-  max-width: 95%;
-}
 
 .fixed-buttons a {
   display: inline-block;
-  background: linear-gradient(45deg, #ff3d77, #ff7eb9);
+ background: linear-gradient(45deg, #bfa14b, #e6d477);
   color: #fff;
   text-decoration: none;
-  padding: 16px 24px; /* 少し小さくする */
+ padding: 20px 36px;
   border-radius: 50px;
   text-align: center;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: bold;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
   transition: all 0.3s;
   white-space: nowrap;
-  flex-grow: 1;          /* 幅を揃えやすくする */
+  flex-grow: 1;
   text-overflow: ellipsis;
   overflow: hidden;
 }
-    .fixed-buttons a:hover {
-      transform: scale(1.15);
-      background: linear-gradient(135deg, #d81b60, #f06292);
-    }
-    .fixed-buttons a.line {
-      background: linear-gradient(135deg, #00c300, #66ff66);
-    }
-    .fixed-buttons a.doc {
-      background: linear-gradient(135deg, #333, #777);
-    }
+
+.fixed-buttons a:hover {
+  transform: scale(1.2);
+  background: linear-gradient(45deg, #a48c3d, #d6c154);
+}
+
+.fixed-buttons a.line {
+  background: linear-gradient(45deg, #004d00, #66cc66);
+}
+
+.fixed-buttons a.doc {
+  background: linear-gradient(45deg, #333333, #777777);
+}
     footer {
       text-align: center;
       padding: 40px 20px;
       color: #aaa;
       font-size: 0.9rem;
     }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
+ .modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  justify-content: center;
+  align-items: center;
+  z-index: 10000; /* ← z-indexをヘッダーより大きくする！ */
+}
     .modal-content {
       background: #fff;
       padding: 30px;
@@ -491,10 +484,165 @@
     font-size: 1.2rem;
   }
 }
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  z-index: 9999;
+  box-sizing: border-box;
+}
+
+.fixed-header .logo {
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: bold;
+}
+
+.fixed-header .header-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.fixed-header .header-buttons a {
+  display: inline-block;
+  background: linear-gradient(45deg, #bfa14b, #e6d477);
+  color: #fff;
+  text-decoration: none;
+  padding: 14px 28px;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.fixed-header .header-buttons a:hover {
+  transform: scale(1.15);
+  background: linear-gradient(45deg, #a48c3d, #d6c154);
+}
+
+.fixed-header .header-buttons a.line {
+  background: linear-gradient(45deg, #006600, #66cc66);
+}
+
+.fixed-header .header-buttons a.line:hover {
+  background: linear-gradient(45deg, #004d00, #55aa55);
+}
+
+.fixed-header .header-buttons a.doc {
+  /* ゴールドと統一する場合は以下の通り */
+  background: linear-gradient(45deg, #bfa14b, #e6d477);
+}
+
+.fixed-header .header-buttons a.doc:hover {
+  background: linear-gradient(45deg, #a48c3d, #d6c154);
+}
+
+.fixed-header .tel {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+body {
+  padding-top: 70px; /* 高さに応じて調整 */
+}
+/* スマホ用調整 */
+@media (max-width: 768px) {
+
+  /* 固定ヘッダーのロゴと電話番号を縦並び */
+  .fixed-header {
+    flex-wrap: wrap;
+    text-align: center;
+  }
+
+  .fixed-header .logo,
+  .fixed-header .tel {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  .fixed-header .header-buttons {
+    justify-content: center;
+    width: 100%;
+    gap: 8px;
+  }
+
+  /* ヘッダーの見出し調整 */
+  header h1 {
+    font-size: 2.4rem;
+  }
+
+  header p {
+    font-size: 1.2rem;
+  }
+
+  .custom-heading .big-text,
+  .custom-heading .ultimate {
+    font-size: 2rem;
+  }
+
+  .custom-heading .small-text {
+    font-size: 1.1rem;
+  }
+
+  /* セクションパディング */
+  section {
+    padding: 15px;
+  }
+
+  /* テーブルを横スクロール */
+  .comparison table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  /* 製品カード幅を100% */
+  .product {
+    width: 100%;
+  }
+
+  /* モーダルの×ボタンを大きく */
+  .close {
+    font-size: 28px;
+    padding: 10px;
+  }
+
+  /* フォームボタンを大きめに */
+  .form-group button {
+    width: 100%;
+    font-size: 1.2rem;
+  }
+
+  /* 固定ボタン */
+  .fixed-buttons a {
+    font-size: 1.1rem;
+    padding: 12px 20px;
+  }
+}
 
  </style>
 </head>
 <body>
+    <div class="fixed-header">
+  <div class="logo">会社ロゴ</div>
+<div class="header-buttons">
+  <a onclick="openModal('estimateModal')" id="estimateBtn">見積もり依頼 (0)</a>
+  <a onclick="openModal('documentModal')" class="doc">資料請求</a>
+  <a href="https://line.me/ti/p/your_line_id" target="_blank" class="line">LINEで相談</a>
+</div>
+  <div class="tel">TEL: 0120-XXX-XXX</div>
+</div>
   <div class="bg-image"></div>
   <div class="white-overlay"></div>
   <div class="dark-overlay"></div>
@@ -503,10 +651,10 @@
     <div class="header-overlay">
 <h1 class="custom-heading">
   <span class="big-text">美</span>
-  <span class="small-text">というインフラの</span>
-  <span class="big-text ultimate">究極系</span>。
+  <span class="small-text">をもっと</span>
+<span class="big-text ultimate">身近に</span>
 </h1>
-      <p>相場の半額近い値段で夢のプロ機器を身近に。</p>
+      <p>夢のプロ機器を現実的な価格で</p>
     </div>
   </header>
 
