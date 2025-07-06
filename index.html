@@ -127,45 +127,65 @@
       flex-wrap: wrap;
       justify-content: center;
     }
-    .product {
-      width: 250px;
-      background: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      text-align: center;
-      padding: 10px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    .product:hover {
-      transform: scale(1.1);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-    }
-    .product img {
-      width: 100%;
-      height: auto;
-    }
-    .product h3 {
-      color: #e91e63;
-      margin: 10px 0 5px;
-    }
-    .product p {
-      margin: 5px 0;
-    }
-    .product button {
-      background: linear-gradient(45deg, #e91e63, #f48fb1);
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 30px;
-      cursor: pointer;
-      margin: 5px 5px 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      transition: all 0.3s;
-    }
-    .product button:hover {
-      background: linear-gradient(45deg, #d81b60, #f06292);
-    }
+.product {
+  background: rgba(18, 18, 18, 0.3);
+  border: 2px solid #bfa14b;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 320px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  transition: transform 0.3s, box-shadow 0.3s;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.product:hover {
+  transform: translateY(-10px);
+}
+
+.product img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.product-info {
+  padding: 20px;
+}
+
+.product-info h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: #f8e7ac;
+  margin: 10px 0;
+}
+
+.product-info .price {
+  color: #bfa14b;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.product-info .desc {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #ddd;
+}
+
+.product-info button {
+  background: linear-gradient(45deg, #bfa14b, #f8e7ac);
+  border: none;
+  color: #000;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.product-info button:hover {
+  background: linear-gradient(45deg, #d4af37, #f8e7ac);
+}
     .details {
       display: none;
       background: #f0f0f0;
@@ -638,6 +658,115 @@ body {
 .fixed-header .tel a:hover {
   text-decoration: underline;
 }
+      /* 高級感のある製品カードレイアウト */
+.product-section {
+  background: rgba(18,18,18,0.3);
+  padding: 60px 20px;
+}
+
+.product-list {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.product {
+  background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+  border: 2px solid #bfa14b;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 320px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  transition: transform 0.3s, box-shadow 0.3s;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.product:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+}
+
+.product img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.product-info {
+  padding: 20px;
+  flex: 1;
+}
+
+.product-info h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: #f8e7ac;
+  margin: 10px 0;
+}
+
+.product-info .price {
+  color: #bfa14b;
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+.product-info .desc {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #ddd;
+  margin-bottom: 20px;
+}
+
+.product-info button {
+  display: block;
+  width: 100%;
+  background: linear-gradient(45deg, #bfa14b, #f8e7ac);
+  border: none;
+  color: #000;
+  padding: 12px;
+  border-radius: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  transition: all 0.3s;
+}
+
+.product-info button:hover {
+  background: linear-gradient(45deg, #d4af37, #f8e7ac);
+  transform: scale(1.05);
+}
+
+.details {
+  display: none;
+  background: #333;
+  color: #eee;
+  padding: 10px;
+  border-radius: 0 0 10px 10px;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+  .product-list {
+    gap: 20px;
+  }
+  .product {
+    width: 100%;
+  }
+  .product-info h3 {
+    font-size: 1.4rem;
+  }
+  .product-info .price {
+    font-size: 1.1rem;
+  }
+}
 
  </style>
 </head>
@@ -668,39 +797,44 @@ body {
     </div>
   </header>
 
-  <section>
-    <div class="highlight">製品ラインナップ</div>
-    <div class="product-list">
-      <div class="product">
-        <img src="https://source.unsplash.com/250x180/?beauty-machine" alt="製品1">
+<section class="product-section">
+  <div class="highlight">製品ラインナップ</div>
+  <div class="product-list">
+    <div class="product">
+      <img src="https://source.unsplash.com/400x300/?beauty-machine" alt="美容機器A">
+      <div class="product-info">
         <h3>美容機器A</h3>
-        <p>¥1,800,000（税込）</p>
-        <p>最新脱毛技術搭載</p>
+        <p class="price">¥1,800,000（税込）</p>
+        <p class="desc">最新脱毛技術搭載。高出力でもお肌に優しい設計です。</p>
         <button onclick="addToCart('美容機器A')">見積もりカートに追加</button>
         <button onclick="toggleDetails(this)">詳細を見る</button>
         <div class="details">美容機器Aの詳細説明がここに表示されます。</div>
       </div>
-      <div class="product">
-        <img src="https://source.unsplash.com/250x180/?spa" alt="製品2">
+    </div>
+    <div class="product">
+      <img src="https://source.unsplash.com/400x300/?spa" alt="美容機器B">
+      <div class="product-info">
         <h3>美容機器B</h3>
-        <p>¥1,800,000（税込）</p>
-        <p>フェイシャル施術対応</p>
+        <p class="price">¥1,800,000（税込）</p>
+        <p class="desc">フェイシャル施術対応。コンパクトながらプロ仕様。</p>
         <button onclick="addToCart('美容機器B')">見積もりカートに追加</button>
         <button onclick="toggleDetails(this)">詳細を見る</button>
         <div class="details">美容機器Bの詳細説明がここに表示されます。</div>
       </div>
-      <div class="product">
-        <img src="https://source.unsplash.com/250x180/?salon" alt="製品3">
+    </div>
+    <div class="product">
+      <img src="https://source.unsplash.com/400x300/?salon" alt="美容機器C">
+      <div class="product-info">
         <h3>美容機器C</h3>
-        <p>¥1,800,000（税込）</p>
-        <p>省スペース設計</p>
+        <p class="price">¥1,800,000（税込）</p>
+        <p class="desc">省スペース設計でサロンの導入負担を軽減します。</p>
         <button onclick="addToCart('美容機器C')">見積もりカートに追加</button>
         <button onclick="toggleDetails(this)">詳細を見る</button>
         <div class="details">美容機器Cの詳細説明がここに表示されます。</div>
       </div>
     </div>
-  </section>
-
+  </div>
+</section>
   <section class="comparison">
     <div class="highlight">他社との製品比較</div>
     <table>
@@ -794,13 +928,6 @@ body {
     </div>
   </section>
 
-  <div class="fixed-buttons">
-    <a onclick="openModal('estimateModal')" id="estimateBtn">見積もり依頼はこちら (0)</a>
-    <a href="https://line.me/ti/p/your_line_id" target="_blank" class="line">LINEで相談</a>
-    <a onclick="openModal('documentModal')" class="doc">資料請求</a>
-  </div>
-
-  <!-- 見積もりモーダル -->
   <div id="estimateModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal('estimateModal')">&times;</span>
