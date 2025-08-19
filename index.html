@@ -260,7 +260,7 @@
       color: #aaa;
       font-size: 0.9rem;
     }
- .modal {
+.modal {
   display: none;
   position: fixed;
   top: 0; left: 0;
@@ -269,7 +269,10 @@
   background: rgba(0,0,0,0.7);
   justify-content: center;
   align-items: center;
-  z-index: 10000; /* ← z-indexをヘッダーより大きくする！ */
+  z-index: 10000;
+}
+.modal.show {
+  display: flex;
 }
     .modal-content {
       background: #fff;
@@ -802,12 +805,49 @@ body {
     <div class="product">
       <img src="https://source.unsplash.com/400x300/?beauty-machine" alt="美容機器A">
       <div class="product-info">
-        <h3>美容機器A</h3>
-        <p class="price">¥1,800,000（税込）</p>
-        <p class="desc">最新脱毛技術搭載。高出力でもお肌に優しい設計です。</p>
+        <h3>photomedicell</h3>
+        <p class="price">¥2,800,000（税込）</p>
+        <p class="desc">最新鋭脱毛機器。多くの要望に答えられる革命機器</p>
         <button onclick="addToCart('美容機器A')">見積もりカートに追加</button>
         <button onclick="toggleDetails(this)">詳細を見る</button>
-        <div class="details">美容機器Aの詳細説明がここに表示されます。</div>
+   <div class="details">
+  <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+    <tr>
+      <th>搭載脱毛方式</th>
+      <td>SHR / IPL（OPT） + RF / E-light</td>
+    </tr>
+    <tr>
+      <th>パワー</th>
+      <td>10〜50J/cm²</td>
+    </tr>
+    <tr>
+      <th>波長</th>
+      <td>
+        SHR：610nm〜950nm<br>
+        IPL / E-light：430nm / 530nm / 590nm / 640nm / 690nm
+      </td>
+    </tr>
+    <tr>
+      <th>最大出力</th>
+      <td>3,000W</td>
+    </tr>
+    <tr>
+      <th>照射面積</th>
+      <td>
+        HR / KPLハンドル：10×50mm<br>
+        IPL / E-lightハンドル：15×50mm / 12×33mm（オプション）
+      </td>
+    </tr>
+    <tr>
+      <th>周波数</th>
+      <td>SHR / OPT：1〜10Hz 調節可能</td>
+    </tr>
+    <tr>
+      <th>重量</th>
+      <td>28kg</td>
+    </tr>
+  </table>
+</div>
       </div>
     </div>
     <div class="product">
