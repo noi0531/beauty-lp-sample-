@@ -90,32 +90,44 @@
   .intro-title{font-family:'Playfair Display','Noto Serif JP',serif}
   @keyframes introPop{0%{opacity:0;transform:translateY(8px) scale(.98);filter:blur(2px)}100%{opacity:1;transform:none;filter:none}}
   @keyframes ringSpin{to{transform:rotate(360deg)}}
+
+  /* Masonry for 導入実績 */
+  .masonry{column-count:1;column-gap:1rem}
+  @media(min-width:768px){.masonry{column-count:2}}
+  @media(min-width:1024px){.masonry{column-count:3}}
+  .masonry>article{break-inside:avoid;margin-bottom:1rem;opacity:0;transform:translateY(12px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+  .masonry>article.is-visible{opacity:1;transform:none}
   @media (prefers-reduced-motion: reduce){.intro-card,.intro-ring::after{animation:none}}
 </style>
 </head>
 <body class="antialiased selection:bg-yellow-300/30 selection:text-black">
+  <!-- Intro -->
   <div x-show="ui.introVisible" x-transition.opacity.duration.700ms class="intro-wrap" aria-live="polite">
-  <div class="intro-card">
-    <div class="intro-ring"></div>
-    <div class="intro-brand text-xs md:text-sm mb-2">NOI&nbsp;BEAUTY</div>
-    <div class="intro-title gold-text spark text-[40px] md:text-[76px] font-black leading-[1.02]">CLEAR / SP</div>
+    <div class="intro-card">
+      <div class="intro-ring"></div>
+      <!-- ロゴ表示 -->
+      <img :src="data.brand.logo" alt="brand" class="h-8 md:h-10 mx-auto mb-2"/>
+      <!-- 製品名差し替え -->
+      <div class="intro-title gold-text spark text-[40px] md:text-[76px] font-black leading-[1.02]">Photomedicell</div>
+      <div class="intro-brand text-xs md:text-sm">フォトメディセル</div>
+    </div>
   </div>
-</div>
-<div class="progress"></div>
+  <div class="progress"></div>
 
   <!-- ===== Sticky Header ===== -->
   <header class="fixed top-0 inset-x-0 z-40">
     <div class="mx-auto max-w-7xl px-4">
       <div class="mt-4 mb-3 glass rounded-2xl px-4 py-3 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <img :src="data.brand.logo" alt="logo" class="w-9 h-9 rounded-xl object-cover"/>
-          <span class="text-sm text-[#4b5563]" x-text="data.brand.tagline"></span>
+          <img :src="data.brand.logo" alt="logo" class="w-28 h-10 object-contain"/>
+          <span class="sr-only" x-text="data.brand.tagline"></span>
         </div>
         <nav class="hidden md:flex items-center gap-6 text-sm text-[#4b5563]">
           <a href="#products" class="hover:text-black">製品</a>
+          <a href="#case" class="hover:text-black">導入実績</a>
           <a href="#value" class="hover:text-black">選ばれる理由</a>
           <a href="#compare" class="hover:text-black">比較</a>
-          <a href="#ba" class="hover:text-black">Before/After</a>
+          <a href="#results" class="hover:text-black">実績データ</a>
           <a href="#faq" class="hover:text-black">FAQ</a>
         </nav>
         <div class="flex items-center gap-2">
@@ -127,10 +139,10 @@
             購入カート
             <span class="absolute -right-2 -top-2 bg-emerald-400 text-black text-xs rounded-full px-1.5 badge" x-text="buyCount()"></span>
           </button>
-          <a :href="data.cta.line" class="hidden sm:inline-flex tag px-3 py-2 rounded-xl text-sm hover:bg-[var(--accent2)]/30">LINEで相談</a>
-          <button @click="openLead('quote')" class="btn inline-flex items-center gap-2 hover:opacity-90 px-4 py-2 rounded-xl">
-            見積もり
-          </button>
+          <!-- 「LINEで相談」を削除し、メインCTAをLINEに -->
+          <a :href="data.cta.line" class="btn inline-flex items-center gap-2 hover:opacity-90 px-4 py-2 rounded-xl">
+            LINEで問い合わせ
+          </a>
         </div>
       </div>
     </div>
@@ -138,64 +150,74 @@
 
   <!-- ===== Hero ===== -->
   <section class="pt-28 md:pt-36 pb-8 hero-grad hero-dust hero-ribbon">
-  <div class="mx-auto max-w-7xl px-4 grid md:grid-cols-2 gap-10 items-center relative">
+    <div class="mx-auto max-w-7xl px-4 grid md:grid-cols-2 gap-10 items-center relative">
 
-    <!-- MADE IN JAPAN badge -->
-    <div class="hidden md:block absolute -left-6 -top-4">
-      <div class="badge-emboss w-28 h-28 rounded-full grid place-items-center text-[12px] tracking-[.12em] font-semibold">
-        <div class="text-center leading-tight">
-          <div>MADE IN</div>
-          <div>JAPAN</div>
+      <!-- MADE IN JAPAN badge -->
+      <div class="hidden md:block absolute -left-6 -top-4">
+        <div class="badge-emboss w-28 h-28 rounded-full grid place-items-center text-[12px] tracking-[.12em] font-semibold">
+          <div class="text-center leading-tight">
+            <div>MADE IN</div>
+            <div>JAPAN</div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Device visual (left on desktop) -->
-    <div class="relative order-2 md:order-1 reveal" data-reveal style="--d:120ms">
-      <div class="aspect-[4/3] rounded-3xl overflow-hidden glass border border-[var(--line)]">
-        <img :src="data.hero.image" alt="hero" class="w-full h-full object-cover"/>
-      </div>
-      <!-- monthly price pill (subtle) -->
-      <div class="absolute -bottom-6 left-4 price-pill rounded-2xl px-4 py-3 flex items-center gap-3 reveal" data-reveal style="--d:260ms">
-        <div class="text-sm">
-          <div class="opacity-80">月額目安</div>
-          <div class="text-xl font-extrabold" x-text="`約¥${data.hero.monthly.toLocaleString()}~`"></div>
+      <!-- Hero Slider（4枚） -->
+      <div class="relative order-2 md:order-1 reveal" data-reveal style="--d:120ms"
+           x-data="{idx:0,t:null,imgs:data.hero.images}"
+           x-init="t=setInterval(()=>idx=(idx+1)%imgs.length,3800)"
+           @mouseenter="clearInterval(t)" @mouseleave="t=setInterval(()=>idx=(idx+1)%imgs.length,3800)">
+        <div class="rounded-3xl overflow-hidden glass border border-[var(--line)] relative">
+          <template x-for="(src,i) in imgs" :key="src">
+            <img :src="src" alt="hero" class="w-full aspect-[4/3] object-cover transition-opacity duration-700" :class="{'opacity-100':idx===i,'opacity-0 absolute inset-0':idx!==i}"/>
+          </template>
+          <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1">
+            <template x-for="(s,i) in imgs" :key="i">
+              <button class="w-2 h-2 rounded-full" :class="idx===i?'bg-[var(--accent)]':'bg-white/70'" @click="idx=i"></button>
+            </template>
+          </div>
+        </div>
+        <!-- monthly price pill -->
+        <div class="absolute -bottom-6 left-4 price-pill rounded-2xl px-4 py-3 flex items-center gap-3 reveal" data-reveal style="--d:260ms">
+          <div class="text-sm">
+            <div class="opacity-80">月額目安</div>
+            <div class="text-xl font-extrabold" x-text="`約¥${data.hero.monthly.toLocaleString()}~`"></div>
+          </div>
         </div>
       </div>
+
+      <!-- Copy & headline -->
+      <div class="order-1 md:order-2">
+        <div class="inline-flex items-center gap-2 tag px-3 py-2 rounded-xl text-xs text-[#4b5563] mb-4 reveal" data-reveal style="--d:40ms">
+          <span>サロン導入台数 <strong x-text="data.hero.stats.units"></strong> 台突破</span>
+          <span class="mx-1">•</span>
+          <span>平均回収 <strong x-text="data.hero.stats.roi"></strong> ヶ月</span>
+        </div>
+
+        <h1 class="serif leading-[1.06] tracking-tight mb-4 reveal" data-reveal style="--d:80ms">
+          <div class="text-[28px] md:text-[34px] font-bold mb-1">効果・差別化・コスパを最大限に追求した、業務用脱毛機。</div>
+          <div class="gold-text spark text-[52px] md:text-[88px] font-black">Photomedicell</div>
+          <div class="text-[14px] md:text-[16px] mt-1 text-[#6b7280]">フォトメディセル</div>
+        </h1>
+
+        <p class="reveal text-[#4b5563] text-base md:text-lg leading-relaxed max-w-xl" data-reveal style="--d:160ms" x-text="data.hero.lead"></p>
+
+        <div class="mt-6 flex flex-wrap items-center gap-3 reveal" data-reveal style="--d:240ms">
+          <a :href="data.cta.line" class="btn font-semibold px-5 py-3 rounded-2xl">LINEで問い合わせ</a>
+          <button @click="openLead('brochure')" class="tag px-5 py-3 rounded-2xl">資料請求</button>
+          <a :href="data.cta.tel" class="tag px-4 py-3 rounded-2xl">TEL: <span x-text="data.cta.telLabel"></span></a>
+        </div>
+
+        <div class="mt-4 text-xs text-[#6b7280] space-y-1 reveal" data-reveal style="--d:300ms">
+          <div>無料 施術賠償保険付き</div>
+          <div>※ 別途賠償保険のお申込みが必要です（無料）。</div>
+        </div>
+      </div>
+
     </div>
+  </section>
 
-    <!-- Copy & headline (right on desktop) -->
-    <div class="order-1 md:order-2">
-      <div class="inline-flex items-center gap-2 tag px-3 py-2 rounded-xl text-xs text-[#4b5563] mb-4 reveal" data-reveal style="--d:40ms">
-        <span>サロン導入台数 <strong x-text="data.hero.stats.units"></strong> 台突破</span>
-        <span class="mx-1">•</span>
-        <span>平均回収 <strong x-text="data.hero.stats.roi"></strong> ヶ月</span>
-      </div>
-
-      <h1 class="serif leading-[1.06] tracking-tight mb-4 reveal" data-reveal style="--d:80ms">
-        <div class="text-[28px] md:text-[34px] font-bold mb-1">効果・差別化・コスパを最大限に追求した、業務用脱毛機。</div>
-        <div class="gold-text spark text-[52px] md:text-[88px] font-black">CLEAR / SP</div>
-        <div class="text-[14px] md:text-[16px] mt-1 text-[#6b7280]">クリアエスピーシリーズ</div>
-      </h1>
-
-      <p class="reveal text-[#4b5563] text-base md:text-lg leading-relaxed max-w-xl" data-reveal style="--d:160ms" x-text="data.hero.lead"></p>
-
-      <div class="mt-6 flex flex-wrap items-center gap-3 reveal" data-reveal style="--d:240ms">
-        <button @click="openLead('quote')" class="btn font-semibold px-5 py-3 rounded-2xl">無料見積もり</button>
-        <button @click="openLead('brochure')" class="tag px-5 py-3 rounded-2xl">資料請求</button>
-        <a :href="data.cta.tel" class="tag px-4 py-3 rounded-2xl">TEL: <span x-text="data.cta.telLabel"></span></a>
-      </div>
-
-      <div class="mt-4 text-xs text-[#6b7280] space-y-1 reveal" data-reveal style="--d:300ms">
-        <div>無料 施術賠償保険付き</div>
-        <div>※ 別途賠償保険のお申込みが必要です（無料）。</div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-  <!-- ===== Products ===== -->
+  <!-- ===== Products（カードっぽく） ===== -->
   <section id="products" class="py-16">
     <div class="mx-auto max-w-7xl px-4">
       <div class="flex items-end justify-between mb-6">
@@ -266,7 +288,26 @@
     </div>
   </section>
 
-  <!-- ===== Value / Compare / BA / FAQ ===== -->
+  <!-- ===== 導入実績（無造作フェードイン） ===== -->
+  <section id="case" class="py-16">
+    <div class="mx-auto max-w-7xl px-4">
+      <h2 class="text-3xl md:text-4xl font-extrabold mb-6 reveal" data-reveal>導入実績</h2>
+      <div class="masonry" x-init="observeMasonry()">
+        <template x-for="(c,i) in data.cases" :key="c.name">
+          <article class="glass rounded-3xl overflow-hidden">
+            <img :src="c.photo" class="w-full object-cover" style="aspect-ratio:4/3"/>
+            <div class="p-4">
+              <div class="font-bold" x-text="c.name"></div>
+              <div class="text-xs text-[#6b7280]" x-text="c.area"></div>
+              <p class="mt-2 text-[#374151]" x-text="c.comment"></p>
+            </div>
+          </article>
+        </template>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 選ばれる理由 ===== -->
   <section id="value" class="py-16">
     <div class="mx-auto max-w-7xl px-4 grid md:grid-cols-3 gap-6">
       <div class="md:col-span-1 flex flex-col justify-center">
@@ -284,17 +325,21 @@
     </div>
   </section>
 
+  <!-- ===== 比較（詳細化） ===== -->
   <section id="compare" class="py-16">
     <div class="mx-auto max-w-7xl px-4">
-      <h2 class="text-3xl md:text-4xl font-extrabold mb-6 reveal" data-reveal>他社との比較</h2>
+      <h2 class="text-3xl md:text-4xl font-extrabold mb-6 reveal" data-reveal>他社との詳細比較</h2>
       <div class="overflow-x-auto glass rounded-3xl">
         <table class="min-w-full text-sm">
           <thead>
             <tr class="text-left text-[#374151]">
               <th class="p-4">製品名</th>
               <th class="p-4">価格</th>
-              <th class="p-4">機能</th>
-              <th class="p-4">保証</th>
+              <th class="p-4">方式/出力</th>
+              <th class="p-4">冷却</th>
+              <th class="p-4">周波数</th>
+              <th class="p-4">保証・サポート</th>
+              <th class="p-4">ランニング</th>
             </tr>
           </thead>
           <tbody>
@@ -303,7 +348,10 @@
                 <td class="p-4 font-medium" x-text="row.name"></td>
                 <td class="p-4" x-text="row.price"></td>
                 <td class="p-4" x-text="row.func"></td>
-                <td class="p-4" x-text="row.warranty"></td>
+                <td class="p-4" x-text="row.cooling"></td>
+                <td class="p-4" x-text="row.freq"></td>
+                <td class="p-4" x-text="row.support"></td>
+                <td class="p-4" x-text="row.running"></td>
               </tr>
             </template>
           </tbody>
@@ -312,24 +360,23 @@
     </div>
   </section>
 
-  <section id="ba" class="py-16">
+  <!-- ===== 実績KPI ===== -->
+  <section id="results" class="py-16">
     <div class="mx-auto max-w-7xl px-4">
-      <h2 class="text-3xl md:text-4xl font-extrabold mb-6 reveal" data-reveal>Before / After</h2>
-      <div class="grid md:grid-cols-2 gap-6">
-        <template x-for="item in data.beforeAfter" :key="item.before">
-          <div class="glass rounded-3xl p-5">
-            <div class="relative aspect-[16/9] overflow-hidden rounded-2xl">
-              <img :src="item.before" alt="before" class="absolute inset-0 w-full h-full object-cover opacity-100"/>
-              <img :src="item.after" alt="after" class="absolute inset-0 w-full h-full object-cover clip" :style="`clip-path: inset(0 ${100-progress}% 0 0);`"/>
-              <input type="range" x-model="progress" @change="snapProgress" min="0" max="100" class="absolute bottom-3 left-1/2 -translate-x-1/2 w-3/4">
-            </div>
-            <div class="flex justify-between text-sm text-[#6b7280] mt-3"><span>Before</span><span>After</span></div>
+      <h2 class="text-3xl md:text-4xl font-extrabold mb-6 reveal" data-reveal>導入後の集客効果と売上実績</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+        <template x-for="r in data.results" :key="r.kpi">
+          <div class="glass rounded-3xl p-6">
+            <div class="text-xs text-[#6b7280]" x-text="r.kpi"></div>
+            <div class="text-3xl font-extrabold mt-1" x-text="r.value"></div>
+            <div class="text-xs text-[#6b7280] mt-1" x-text="r.note"></div>
           </div>
         </template>
       </div>
     </div>
   </section>
 
+  <!-- ===== FAQ ===== -->
   <section id="faq" class="py-16">
     <div class="mx-auto max-w-7xl px-4">
       <h2 class="text-3xl md:text-4xl font-extrabold mb-6 reveal" data-reveal>よくある質問</h2>
@@ -347,20 +394,20 @@
     </div>
   </section>
 
-  <!-- ===== Bottom CTA ===== -->
+  <!-- ===== Bottom CTA（LINEに統一） ===== -->
   <div class="fixed bottom-4 inset-x-0 z-40">
     <div class="mx-auto max-w-7xl px-4">
       <div class="blur-bottom glass rounded-2xl p-3 flex items-center justify-between">
-        <div class="text-sm md:text-base"><strong>無料見積もり</strong>または<strong>資料請求</strong>は2分で完了。</div>
+        <div class="text-sm md:text-base"><strong>LINEで問い合わせ</strong>または<strong>資料請求</strong>は2分で完了。</div>
         <div class="flex gap-2">
-          <button @click="openLead('quote')" class="btn text-black font-semibold px-4 py-2 rounded-xl">見積もり</button>
+          <a :href="data.cta.line" class="btn text-black font-semibold px-4 py-2 rounded-xl">LINEで問い合わせ</a>
           <button @click="openLead('brochure')" class="tag px-4 py-2 rounded-xl">資料請求</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ===== Drawers & Modals ===== -->
+  <!-- ===== Drawers & Modals（元機能は維持） ===== -->
   <aside x-show="ui.quoteOpen" x-transition class="fixed inset-y-0 right-0 w-full sm:w-[480px] z-50">
     <div class="absolute inset-0 bg-black/20" @click="ui.quoteOpen=false"></div>
     <div class="relative h-full glass w-full ml-auto p-4 sm:p-6 overflow-y-auto">
@@ -495,14 +542,14 @@
     </div>
   </div>
 
-  <!-- ===== Footer ===== -->
+  <!-- ===== Footer（社名をVerviiiへ） ===== -->
   <footer class="pt-20 pb-10">
     <div class="mx-auto max-w-7xl px-4 text-sm text-[#6b7280]">
       <div class="divider mb-6"></div>
       <div class="flex flex-wrap gap-3 items-center justify-between">
         <div class="flex items-center gap-3">
-          <img :src="data.brand.logo" alt="logo" class="w-8 h-8 rounded-xl object-cover"/>
-          <span>© <span x-text="new Date().getFullYear()"></span> <span x-text="data.brand.name"></span></span>
+          <img :src="data.brand.logo" alt="logo" class="w-8 h-8 object-contain"/>
+          <span>© <span x-text="new Date().getFullYear()"></span> Verviii</span>
         </div>
         <div class="flex gap-4">
           <a href="#" class="hover:text-black">特商法</a>
@@ -517,11 +564,11 @@
   {
     "meta": {
       "title": "美は、戦略だ。｜プロ機器を現実的な価格で",
-      "description": "photomedicell ほか美容機器の直販サイト。最短1週間、3年保証、SNS集客講習つき。価格・性能・サポートの3拍子。"
+      "description": "Photomedicell ほか美容機器の直販サイト。最短1週間、3年保証、SNS集客講習つき。価格・性能・サポートの3拍子。"
     },
     "brand": {
-      "name": "NOI BEAUTY",
-      "logo": "https://images.unsplash.com/photo-1545235617-9465d2a55698?q=80&w=300&auto=format&fit=crop",
+      "name": "Verviii",
+      "logo": "https://dummyimage.com/200x40/ffffff/000000.png&text=Verviii",
       "tagline": "サロンDXで、勝てる美容経営。"
     },
     "cta": {
@@ -533,17 +580,15 @@
     },
     "hero": {
       "lead": "導入から集客・運用までを標準サポート。『最短回収』を設計したプロダクトです。",
-      "image": "https://images.unsplash.com/photo-1596461404969-9ae70b7b0cd5?q=80&w=1600&auto=format&fit=crop",
+      "images": [
+        "https://images.unsplash.com/photo-1596461404969-9ae70b7b0cd5?q=80&w=1600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1580584128409-012d1e761a7b?q=80&w=1600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1556228578-97c28c7b6757?q=80&w=1600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1601333144085-0c0b13f8b4bc?q=80&w=1600&auto=format&fit=crop"
+      ],
       "monthly": 40000,
       "stats": {"units": "300+", "roi": 6}
     },
-    "socialProof": [
-      "https://dummyimage.com/200x60/ffffff/000000.png&text=Salon+A",
-      "https://dummyimage.com/200x60/ffffff/000000.png&text=Salon+B",
-      "https://dummyimage.com/200x60/ffffff/000000.png&text=Salon+C",
-      "https://dummyimage.com/200x60/ffffff/000000.png&text=Salon+D",
-      "https://dummyimage.com/200x60/ffffff/000000.png&text=Salon+E"
-    ],
     "products": [
       {"type":"機器","sku":"PM-001","name":"Photomedicell","copy":"〜多くの要望に答えられる革命脱毛器〜","badge":"ベストセラー","price":2800000,"priceNote":"※ 分割・リース可","stock":"即納","image":"https://images.unsplash.com/photo-1599050751795-5cdaaa1ffc51?q=80&w=1200&auto=format&fit=crop","highlights":["SHR/OPT + RF","3,000W高出力","大型チラー搭載","3年保証"],"specs":[{"k":"搭載脱毛方式","v":"SHR / IPL（OPT） + RF / E-light"},{"k":"パワー","v":"10〜50J/cm²"},{"k":"波長","v":"430/530/590/640/690nm 他"},{"k":"最大出力","v":"3,000W"},{"k":"照射面積","v":"10×50mm / 15×50mm"},{"k":"周波数","v":"1〜10Hz 調節可"},{"k":"重量","v":"28kg"}],"open":false},
       {"type":"機器","sku":"CL-001","name":"Celllook","copy":"〜効果の可視化と顧客満足度MAXへ〜","badge":"人気","price":2100000,"priceNote":"※ 分割・リース可","stock":"即納","image":"https://images.unsplash.com/photo-1580584128409-012d1e761a7b?q=80&w=1200&auto=format&fit=crop","highlights":["効果可視化","顧客満足度UP","直感UI"],"specs":[{"k":"モード","v":"フェイシャル / スキン解析"},{"k":"重量","v":"20kg"}],"open":false},
@@ -554,19 +599,27 @@
       {"type":"専売品","sku":"EX-IVM","name":"IN VITI MIST","copy":"〜肌を守る6つの無添加〜","badge":"専売品","price":null,"priceMessage":"ロット販売につきお問い合わせください","stock":"即納","image":"https://images.unsplash.com/photo-1545237017-3a3fc540cd0a?q=80&w=1200&auto=format&fit=crop","highlights":["無添加","ミスト"],"specs":[],"open":false},
       {"type":"専売品","sku":"EX-UVS","name":"VITI UV SERUM","copy":"〜世界最高水準UVカット値〜","badge":"専売品","price":null,"priceMessage":"ロット販売につきお問い合わせください","stock":"即納","image":"https://images.unsplash.com/photo-1585238342028-4bbc2a4e13d8?q=80&w=1200&auto=format&fit=crop","highlights":["高UVカット"],"specs":[],"open":false}
     ],
+    "cases": [
+      {"name":"Salon A","area":"東京・渋谷","comment":"導入3ヶ月で月売上+120万円、男性客比率が1.8倍に。","photo":"https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop"},
+      {"name":"Salon B","area":"大阪・梅田","comment":"インスタ連携×体験導線で新規月45件を安定獲得。","photo":"https://images.unsplash.com/photo-1556229010-aa3b66e8f837?q=80&w=1200&auto=format&fit=crop"},
+      {"name":"Salon C","area":"福岡・薬院","comment":"回転率が上がり、スタッフ1名でも高稼働を実現。","photo":"https://images.unsplash.com/photo-1603287681836-b174ce5074c2?q=80&w=1200&auto=format&fit=crop"},
+      {"name":"Salon D","area":"名古屋・栄","comment":"フェイシャル提案の幅が広がり客単価+4,800円。","photo":"https://images.unsplash.com/photo-1596464716121-8b6322dcbcf8?q=80&w=1200&auto=format&fit=crop"}
+    ],
     "value": [
       {"title":"工場提携×直販","desc":"中間マージンを削減し、品質はそのままに価格を最適化。利益ではなく価値で勝つ。"},
       {"title":"アフターケアまで伴走","desc":"機器納入だけで終わらない。SNS講習・HP作成・CRM導入まで一気通貫サポート。"},
-      {"title":"なににしよーーーーー","desc":"なににしよーーーーーー"},
-      {"title":"なににしよーーーーーーー","desc":"なににしよーーーーーーーーー"}
+      {"title":"冷却と安定照射","desc":"大型チラーと温度監視で熱ダレを抑制。長時間運転でも安定。"},
+      {"title":"現場UI","desc":"直感操作で新人でも迷わない。プリセット多めで時短運用。"}
     ],
     "compare": [
-      {"name":"当社製品","price":"180〜280万円","func":"脱毛/フェイシャル","warranty":"3年"},
-      {"name":"他社A","price":"350〜400万円","func":"脱毛のみ","warranty":"1年"},
-      {"name":"他社B","price":"350万円","func":"フェイシャルのみ","warranty":"1年"}
+      {"name":"Photomedicell","price":"180〜280万円","func":"SHR/OPT + RF（最大50J）","cooling":"大型チラー+サファイア先端","freq":"1〜10Hz","support":"3年保証/代替機/講習","running":"約¥8〜12/ショット"},
+      {"name":"他社A","price":"350〜400万円","func":"SHRのみ（〜40J）","cooling":"空冷","freq":"〜6Hz","support":"1年保証","running":"約¥15/ショット"},
+      {"name":"他社B","price":"350万円","func":"フェイシャル特化（IPL）","cooling":"小型チラー","freq":"〜5Hz","support":"1年保証","running":"約¥18/ショット"}
     ],
-    "beforeAfter": [
-      {"before":"https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1600&auto=format&fit=crop","after":"https://images.unsplash.com/photo-1545235617-9465d2a55698?q=80&w=1600&auto=format&fit=crop"}
+    "results": [
+      {"kpi":"平均月次新規数","value":"+42件","note":"導入サロン中央値（3ヶ月）"},
+      {"kpi":"客単価（フェイシャル）","value":"+¥4,500","note":"セット提案でアップセル"},
+      {"kpi":"投資回収期間","value":"約6ヶ月","note":"リース/現金混在の中央値"}
     ],
     "faq": [
       {"q":"ローン審査は厳しいですか？","a":"個人事業主様でも多く通過されています。金融機関や審査会社のご紹介も可能です。"},
@@ -596,6 +649,19 @@
         }, { threshold: 0.15, rootMargin: "0px 0px -5% 0px" });
         els.forEach(el => io.observe(el));
       },
+      observeMasonry(){
+        const cards = document.querySelectorAll('.masonry > article');
+        const io = new IntersectionObserver((es)=>{
+          es.forEach(e=>{
+            if(e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); }
+          })
+        }, {threshold:.15});
+        // ランダム遅延で“無造作”感
+        cards.forEach((c,i)=>{
+          c.style.transitionDelay = (Math.random()*300|0)+'ms';
+          io.observe(c);
+        });
+      },
       onScroll(){
         const h=document.documentElement;
         const scrolled=(h.scrollTop)/(h.scrollHeight-h.clientHeight)*100||0;
@@ -607,12 +673,12 @@
         try{ this.data = JSON.parse(document.getElementById('data').textContent) }catch(e){ console.error(e) }
         this.products = this.data.products;
 
-      // Intro once per session (off if prefers-reduced-motion)
-      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const shown = sessionStorage.getItem('introDone') === '1';
-      if(prefersReduced || shown){ this.ui.introVisible = false; }
-      else { setTimeout(()=>{ this.ui.introVisible=false; sessionStorage.setItem('introDone','1') }, 1400); }
-      this.$watch('ui.introVisible', v => document.body.classList.toggle('overflow-hidden', v))
+        // Intro once per session (off if prefers-reduced-motion)
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const shown = sessionStorage.getItem('introDone') === '1';
+        if(prefersReduced || shown){ this.ui.introVisible = false; }
+        else { setTimeout(()=>{ this.ui.introVisible=false; sessionStorage.setItem('introDone','1') }, 1400); }
+        this.$watch('ui.introVisible', v => document.body.classList.toggle('overflow-hidden', v))
 
         // restore
         const qs = localStorage.getItem('quoteSets');
@@ -625,6 +691,7 @@
           this.observeReveals();
           this.onScroll();
           window.addEventListener('scroll', this.onScroll.bind(this), { passive:true });
+          this.observeMasonry();
         });
 
         // 再描画時にアニメ監視を張り直す
@@ -716,7 +783,7 @@
         window.location.href=mailto; this.ui.checkoutOpen=false;
       },
 
-      // Before/After: スナップ
+      // Before/After:（今回はKPI化のため未使用）スナップ関数は残しておく
       snapProgress(){
         const steps=[0,25,50,75,100];
         const val=this.progress; let nearest=steps[0];
