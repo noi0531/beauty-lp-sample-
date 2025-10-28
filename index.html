@@ -1,10 +1,3 @@
-<!--
-Beauty LP Revamp v2
-- 1ファイル / GitHub Pages 直置きOK
-- Tailwind CDN + Alpine.js
-- 見積カート & 購入カート（複数見積セット対応 / ローカル保存）
-- 画像や文言は <script id="data"> のJSONのみ編集
--->
 <!DOCTYPE html>
 <html lang="ja" x-data="app()" x-init="init()">
 <head>
@@ -15,271 +8,320 @@ Beauty LP Revamp v2
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&display=swap');
+    /* ===== White & Gold Theme ===== */
     :root{
-      /* シックで高級感のある新配色（要望に合わせて微調整可） */
-      --bg:#0a0a0f;         /* 背景をより深いネイビー寄りブラック */
-      --panel:#111827;      /* カード背景をやや明るく */
-      --ink:#e7e7ee;        /* テキストは青み薄グレー */
-      --muted:#9aa1b2;      /* 補助文字 */
-      --line:#1f2937;       /* 罫線 */
-      --accent:#a78bfa;     /* メイン：上品なバイオレット */
-      --accent2:#34d399;    /* サブ：落ち着いたエメラルド */
+      --bg:#faf9f6;
+      --panel:rgba(255,255,255,.6);
+      --ink:#2b2b2b;
+      --muted:#6b7280;
+      --line:rgba(0,0,0,.06);
+      --accent:#d6b25e;
+      --accent2:#f3d98c;
+      --shadow:0 20px 40px -20px rgba(0,0,0,.15);
+      --ease:cubic-bezier(.2,.7,.2,1);
     }
     html,body{background:var(--bg); color:var(--ink)}
-    .glass{backdrop-filter:saturate(140%) blur(10px); background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03)); border:1px solid rgba(255,255,255,.08)}
-    .shine{position:relative;overflow:hidden}
-    .shine::after{content:""; position:absolute; inset:-200% -50%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent); transform:skewX(-20deg); animation:shine 6s linear infinite}
-    @keyframes shine{0%{transform:translateX(-60%) skewX(-20deg)}100%{transform:translateX(120%) skewX(-20deg)}}
-    .hero-grad{background:radial-gradient(1200px 600px at 10% -10%, rgba(167,139,250,.18), transparent 60%),radial-gradient(900px 500px at 90% 10%, rgba(52,211,153,.12), transparent 60%)}
-    .divider{height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent)}
-    .tag{border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.06)}
-    .btn{--tw-shadow:0 10px 20px -10px rgba(167,139,250,.55); box-shadow:var(--tw-shadow)}
-    .blur-bottom{backdrop-filter:blur(8px)}
-    .badge{min-width:1.5rem}
-/* ===== Scroll/Reveal & Micro-interactions ===== */
-:root { --ease: cubic-bezier(.2,.7,.2,1); }
+    html{scroll-behavior:smooth}
 
-/* スクロール進捗バー */
-.progress{position:fixed;top:0;left:0;height:3px;width:calc(var(--scroll,0)*1%);background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:60}
+    .glass{backdrop-filter: blur(10px); background:var(--panel); border:1px solid rgba(255,255,255,.6); box-shadow:var(--shadow)}
+    .btn{background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#000; font-weight:700; transition:transform .2s var(--ease), box-shadow .3s; box-shadow:0 10px 20px -10px rgba(214,178,94,.55)}
+    .btn:hover{transform:translateY(-2px)}
+    .tag{border:1px solid var(--accent); background:transparent; color:var(--accent)}
+    .tag:hover{background:var(--accent2); color:#000}
+    .divider{height:1px; background:linear-gradient(90deg,transparent,var(--line),transparent)}
+    .progress{position:fixed;top:0;left:0;height:3px;width:calc(var(--scroll,0)*1%);background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:60}
 
-/* フェードアップ（遅延は --d で指定） */
-.reveal{opacity:0;transform:translateY(14px) scale(.98)}
-.reveal.is-visible{opacity:1;transform:none;transition:transform .8s var(--ease),opacity .8s var(--ease);transition-delay:var(--d,0ms)}
+    /* Hero visual */
+    .hero-grad{background:linear-gradient(to bottom,#fffbea,#fff5e1,#faf9f6);position:relative}
+    .hero-dust::before,.hero-dust::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,rgba(255,255,255,.3) 1px,transparent 2px),radial-gradient(circle,rgba(214,178,94,.2) 1px,transparent 3px);background-size:200px 200px,300px 300px;animation:dustMove 60s linear infinite}
+    .hero-dust::after{animation-direction:reverse;opacity:.7}
+    @keyframes dustMove{from{background-position:0 0,0 0}to{background-position:400px 600px,-300px -500px}}
 
-/* カードのホバー */
-.card-hover{transition:transform .45s var(--ease),box-shadow .45s var(--ease)}
-.card-hover:hover{transform:translateY(-6px);box-shadow:0 20px 40px -20px rgba(0,0,0,.6)}
-.img-zoom{transition:transform 1.2s var(--ease)}
-.card-hover:hover .img-zoom{transform:scale(1.03)}
+    /* Background slideshow (Ken Burns) */
+    .slide{position:absolute; inset:0; opacity:0; transition:opacity 1s var(--ease)}
+    .slide.is-active{opacity:1}
+    .ken{width:100%; height:100%; object-fit:cover; transform-origin:center; animation:ken 12s ease-in-out forwards}
+    @keyframes ken{0%{transform:scale(1.05) translateX(0)}100%{transform:scale(1.12) translateX(-2%)}}
 
-/* ボタンのホバー */
-.btn{transition:transform .2s var(--ease),box-shadow .3s var(--ease)}
-.btn:hover{transform:translateY(-2px)}
-.btn:active{transform:translateY(0)}
+    /* Typography embellish */
+    .serif{font-family:'Noto Serif JP', serif}
+    .gold-text{background:linear-gradient(135deg,#c8a857 0%,#e7c874 40%,#b8923a 60%,#f3dc93 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+    .spark{position:relative}
+    .spark::after{content:'';position:absolute;right:-.2em;top:.15em;width:.6em;height:.6em;background:radial-gradient(circle,rgba(255,255,255,.95) 0,rgba(255,255,255,.6) 35%,rgba(255,255,255,0) 70%);transform:rotate(25deg);filter:blur(.2px)}
 
-html{scroll-behavior:smooth}
+    /* Reveal */
+    .reveal{opacity:0;transform:translateY(14px) scale(.98)}
+    .reveal.is-visible{opacity:1;transform:none;transition:transform .8s var(--ease),opacity .8s var(--ease);transition-delay:var(--d,0ms)}
+    .card-hover{transition:transform .45s var(--ease),box-shadow .45s var(--ease)}
+    .card-hover:hover{transform:translateY(-6px);box-shadow:0 30px 60px -30px rgba(0,0,0,.2)}
+    .img-zoom{transition:transform 1.2s var(--ease)}
+    .card-hover:hover .img-zoom{transform:scale(1.03)}
+    @media (prefers-reduced-motion: reduce){.reveal,.reveal.is-visible,.card-hover,.img-zoom,.btn,.ken{transition:none!important;animation:none!important}}
 
-/* 低モーション設定の人向けにアニメ弱め */
-@media (prefers-reduced-motion: reduce){
-  .reveal,.reveal.is-visible,.card-hover,.img-zoom,.btn{transition:none!important}
-}
-       /* === ここから追記 ========================= */
-    .tag-on-img{
-      background: rgba(0,0,0,.55);
-      border-color: rgba(255,255,255,.2);
-      color:#fff;
-      backdrop-filter: saturate(120%) blur(2px);
-      -webkit-backdrop-filter: saturate(120%) blur(2px);
-      text-shadow: 0 1px 1px rgba(0,0,0,.6);
-    }
-    .media-scrim::before{
-      content:""; position:absolute; inset:0;
-      background: radial-gradient(220px 120px at 1rem 1rem, rgba(0,0,0,.42), transparent 65%);
-      pointer-events:none; border-radius: inherit;
-    }
-    /* ========================================= */
+    /* Image tags on photos */
+    .tag-on-img{background:rgba(255,255,255,.85);border-color:rgba(0,0,0,.06);color:#1f2937;text-shadow:none;backdrop-filter:saturate(120%) blur(2px)}
+    .media-scrim::before{content:""; position:absolute; inset:0; background: radial-gradient(220px 120px at 1rem 1rem, rgba(0,0,0,.10), transparent 65%); pointer-events:none; border-radius: inherit}
+
+    /* Header */
+    header .glass{background:rgba(255,255,255,.6)}
+
+    /* Badges */
+    .badge-emboss{background:radial-gradient(100% 100% at 30% 30%,#f8e9b6 0,#d6b25e 60%,#b48a2f 100%);color:#6b5520;box-shadow:inset 0 2px 6px rgba(255,255,255,.6), inset 0 -6px 12px rgba(0,0,0,.12), 0 6px 16px rgba(0,0,0,.08)}
+
+    /* Intro */
+    .intro-wrap{position:fixed;inset:0;background:linear-gradient(180deg,#ffffff 0%,#fff8e1 100%);display:grid;place-items:center;z-index:90}
+    .intro-card{text-align:center;animation:introPop .7s var(--ease) both}
+    .intro-brand{letter-spacing:.3em;color:#7a6b3a}
+    .intro-ring{width:96px;height:96px;border-radius:9999px;margin:0 auto 14px;position:relative;background:radial-gradient(60% 60% at 30% 30%, #ffffff 0, #fff7d6 70%, transparent 71%);box-shadow:inset 0 1px 3px rgba(255,255,255,.7), inset 0 -4px 10px rgba(0,0,0,.08)}
+    .intro-ring::after{content:"";position:absolute;inset:-6px;border-radius:inherit;background:conic-gradient(from 0deg, rgba(214,178,94,.0) 0 60%, rgba(214,178,94,.8) 75%, rgba(214,178,94,.0) 100%);animation:ringSpin 1.6s linear infinite;mask:radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px))}
+    .intro-title{font-family:'Playfair Display','Noto Serif JP',serif}
+    @keyframes introPop{0%{opacity:0;transform:translateY(8px) scale(.98);filter:blur(2px)}100%{opacity:1;transform:none;filter:none}}
+    @keyframes ringSpin{to{transform:rotate(360deg)}}
+
+    /* Masonry for 導入実績 */
+    .masonry{column-count:1;column-gap:1rem}
+    @media(min-width:768px){.masonry{column-count:2}}
+    @media(min-width:1024px){.masonry{column-count:3}}
+    .masonry>article{break-inside:avoid;margin-bottom:1rem;opacity:0;transform:translateY(12px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+    .masonry>article.is-visible{opacity:1;transform:none}
   </style>
 </head>
-<body class="antialiased selection:bg-purple-500/30 selection:text-white">
+<body class="antialiased selection:bg-yellow-300/30 selection:text-black">
+  <!-- Intro（そのまま） -->
+  <div x-show="ui.introVisible" x-transition.opacity.duration.700ms class="intro-wrap" aria-live="polite">
+    <div class="intro-card">
+      <div class="intro-ring"></div>
+      <img :src="data.brand.logo" alt="brand" class="h-8 md:h-10 mx-auto mb-2"/>
+      <div class="intro-title gold-text spark text-[40px] md:text-[76px] font-black leading-[1.02]">Photomedicell</div>
+      <div class="intro-brand text-xs md:text-sm">フォトメディセル</div>
+    </div>
+  </div>
+
   <div class="progress"></div>
-  <!-- 以降そのまま -->
+
   <!-- ===== Sticky Header ===== -->
   <header class="fixed top-0 inset-x-0 z-40">
     <div class="mx-auto max-w-7xl px-4">
       <div class="mt-4 mb-3 glass rounded-2xl px-4 py-3 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <img :src="data.brand.logo" alt="logo" class="w-9 h-9 rounded-xl object-cover"/>
-          <span class="text-sm text-gray-300" x-text="data.brand.tagline"></span>
+          <!-- 左上ロゴ（画像差し替え可） -->
+          <img :src="data.brand.logo" alt="logo" class="w-28 h-10 object-contain"/>
+          <span class="sr-only" x-text="data.brand.tagline"></span>
         </div>
-        <nav class="hidden md:flex items-center gap-6 text-sm text-gray-300">
-          <a href="#products" class="hover:text-white">製品</a>
-          <a href="#value" class="hover:text-white">選ばれる理由</a>
-          <a href="#compare" class="hover:text-white">比較</a>
-          <a href="#ba" class="hover:text-white">Before/After</a>
-          <a href="#faq" class="hover:text-white">FAQ</a>
+        <nav class="hidden md:flex items-center gap-6 text-sm text-[#4b5563]">
+          <a href="#products" class="hover:text-black">製品</a>
+          <a href="#case" class="hover:text-black">導入実績</a>
+          <a href="#value" class="hover:text-black">選ばれる理由</a>
+          <a href="#compare" class="hover:text-black">比較</a>
+          <a href="#results" class="hover:text-black">実績データ</a>
+          <a href="#faq" class="hover:text-black">FAQ</a>
         </nav>
         <div class="flex items-center gap-2">
-          <button @click="openQuoteDrawer()" class="relative tag px-3 py-2 rounded-xl text-sm hover:bg-white/10">
+          <button @click="openQuoteDrawer()" class="relative tag px-3 py-2 rounded-xl text-sm hover:bg-[var(--accent2)]/30">
             見積カート
-            <span class="absolute -right-2 -top-2 bg-purple-500 text-white text-xs rounded-full px-1.5 badge" x-text="quoteCount()"></span>
+            <span class="absolute -right-2 -top-2 bg-[var(--accent)] text-black text-xs rounded-full px-1.5 badge" x-text="quoteCount()"></span>
           </button>
-          <button @click="openBuyDrawer()" class="relative tag px-3 py-2 rounded-xl text-sm hover:bg-white/10">
+          <button @click="openBuyDrawer()" class="relative tag px-3 py-2 rounded-xl text-sm hover:bg-[var(--accent2)]/30">
             購入カート
-            <span class="absolute -right-2 -top-2 bg-emerald-500 text-black text-xs rounded-full px-1.5 badge" x-text="buyCount()"></span>
+            <span class="absolute -right-2 -top-2 bg-emerald-400 text-black text-xs rounded-full px-1.5 badge" x-text="buyCount()"></span>
           </button>
-          <a :href="data.cta.line" class="hidden sm:inline-flex tag px-3 py-2 rounded-xl text-sm hover:bg-white/10">LINEで相談</a>
-          <button @click="openLead('quote')" class="btn inline-flex items-center gap-2 bg-[var(--accent)] hover:opacity-90 text-black font-medium px-4 py-2 rounded-xl">
-            見積もり
-          </button>
+          <a :href="data.cta.line" class="btn inline-flex items-center gap-2 hover:opacity-90 px-4 py-2 rounded-xl">LINEで問い合わせ</a>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- ===== Hero ===== -->
-<section class="pt-28 md:pt-36 pb-8 hero-grad">
-  <div class="mx-auto max-w-7xl px-4 grid md:grid-cols-2 gap-10 items-center">
-    <div>
-      <div class="inline-flex items-center gap-2 tag px-3 py-2 rounded-xl text-xs text-gray-300 mb-4 reveal" data-reveal style="--d:40ms">
-        <span>サロン導入台数 <strong x-text="data.hero.stats.units"></strong> 台突破</span>
-        <span class="mx-1">•</span>
-        <span>平均回収 <strong x-text="data.hero.stats.roi"></strong> ヶ月</span>
-      </div>
-
-      <!-- ① 見出し -->
-<h1 class="text-4xl md:text-6xl font-extrabold leading-[1.08] tracking-tight mb-4 reveal" data-reveal style="--d:80ms">
-  <span class="block">美は、戦略だ。</span>
-  <span class="block text-[var(--accent)]">プロ機器を、現実的な価格で。</span>
-</h1>
-      <!-- ② リード文 -->
-      <p class="reveal text-gray-300/90 text-base md:text-lg leading-relaxed max-w-xl"
-         data-reveal style="--d:160ms"
-         x-text="data.hero.lead"></p>
-
-      <div class="mt-6 flex flex-wrap items-center gap-3 reveal" data-reveal style="--d:240ms">
-        <button @click="openLead('quote')" class="btn bg-[var(--accent)] hover:opacity-90 text-black font-semibold px-5 py-3 rounded-2xl">無料見積もり</button>
-        <button @click="openLead('brochure')" class="tag px-5 py-3 rounded-2xl">資料請求</button>
-        <a :href="data.cta.tel" class="tag px-4 py-3 rounded-2xl">TEL: <span x-text="data.cta.telLabel"></span></a>
-      </div>
-
-      <div class="mt-6 flex items-center gap-4 text-xs text-gray-400 reveal" data-reveal style="--d:320ms">
-        <div class="flex items-center gap-2"><span class="w-2 h-2 bg-emerald-400 rounded-full"></span>最短1週間納品</div>
-        <div class="flex items-center gap-2"><span class="w-2 h-2 bg-[var(--accent)] rounded-full"></span>3年保証</div>
-        <div class="flex items-center gap-2"><span class="w-2 h-2 bg-violet-300 rounded-full"></span>SNS集客講習</div>
-      </div>
-    </div>
-
-    <!-- ③ 右側ビジュアル -->
-    <div class="relative reveal" data-reveal style="--d:200ms">
-      <div class="aspect-[4/3] rounded-3xl overflow-hidden glass border border-white/10 shine">
-        <img :src="data.hero.image" alt="hero" class="w-full h-full object-cover"/>
-      </div>
-      <div class="absolute -bottom-6 right-4 glass rounded-2xl px-4 py-3 flex items-center gap-3 reveal" data-reveal style="--d:360ms">
-        <div class="text-sm">
-          <div class="text-gray-300">月額コスト目安</div>
-          <div class="text-xl font-bold" x-text="`約¥${data.hero.monthly.toLocaleString()}~`"></div>
+  <!-- ===== HERO（背景スライド＋上にテキスト） ===== -->
+  <section class="relative hero-grad hero-dust pt-[84px] md:pt-[108px]">
+    <!-- 背景スライド -->
+    <div class="absolute inset-0 overflow-hidden" x-data="{idx:0,t:null,imgs:data.hero.bg}" x-init="
+         t=setInterval(()=>idx=(idx+1)%imgs.length,5200)
+       " @mouseenter="clearInterval(t)" @mouseleave="t=setInterval(()=>idx=(idx+1)%imgs.length,5200)">
+      <template x-for="(src,i) in imgs" :key="src">
+        <div class="slide" :class="{'is-active': idx===i}">
+          <img :src="src" alt="hero background sample" class="ken" />
         </div>
-        <div class="text-2xl">💡</div>
+      </template>
+      <!-- 視認性オーバーレイ -->
+      <div class="absolute inset-0 bg-gradient-to-b from-black/45 via-black/25 to-transparent md:from-black/35"></div>
+      <!-- SAMPLEバッジ -->
+      <div class="absolute left-3 top-3 md:left-6 md:top-6">
+        <span class="tag-on-img inline-block text-[10px] md:text-xs px-2 py-1 rounded-md tracking-wide">SAMPLE IMAGES</span>
       </div>
     </div>
-  </div>
-</section>
+
+    <!-- コンテンツ -->
+    <div class="relative z-10">
+      <div class="mx-auto max-w-7xl px-4">
+        <div class="min-h-[70svh] md:min-h-[85svh] flex items-center">
+          <div class="w-full max-w-3xl">
+            <div class="inline-flex items-center gap-2 tag px-3 py-2 rounded-xl text-xs text-white/90 bg-white/10 border-white/30 backdrop-blur">
+              <span>サロン導入台数 <strong x-text="data.hero.stats.units"></strong> 台突破</span>
+              <span class="mx-1">•</span>
+              <span>平均回収 <strong x-text="data.hero.stats.roi"></strong> ヶ月</span>
+            </div>
+
+            <h1 class="serif leading-[1.04] tracking-tight mt-4">
+              <div class="text-white/95 drop-shadow-[0_2px_10px_rgba(0,0,0,.35)] text-[6.2vw] md:text-[42px] font-bold break-keep">効果・差別化・コスパを最大限に追求した、業務用脱毛機。</div>
+              <div class="gold-text spark drop-shadow-[0_2px_10px_rgba(0,0,0,.35)] text-[14vw] md:text-[96px] font-black">Photomedicell</div>
+              <div class="text-white/80 text-[3.8vw] md:text-[16px] mt-1">フォトメディセル</div>
+            </h1>
+
+            <p class="mt-4 text-white/90 text-[4.2vw] md:text-lg leading-relaxed max-w-2xl">
+              <span x-text="data.hero.lead"></span>
+            </p>
+
+            <div class="mt-6 flex flex-wrap items-center gap-3">
+              <a :href="data.cta.line" class="btn font-semibold px-5 py-3 rounded-2xl">LINEで問い合わせ</a>
+              <button @click="openLead('brochure')" class="tag px-5 py-3 rounded-2xl border-white/50 text-white hover:text-black hover:border-[var(--accent)]">資料請求</button>
+              <a :href="data.cta.tel" class="tag px-4 py-3 rounded-2xl border-white/50 text-white hover:text-black hover:border-[var(--accent)]">TEL: <span x-text="data.cta.telLabel"></span></a>
+            </div>
+
+            <div class="mt-4 text-xs text-white/80 space-y-1">
+              <div>無料 施術賠償保険付き</div>
+              <div>※ 別途賠償保険のお申込みが必要です（無料）。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- ===== Products ===== -->
-<section id="products" class="py-16">
-  <div class="mx-auto max-w-7xl px-4">
-    <div class="flex items-end justify-between mb-6">
-      <div>
-<h2 class="text-3xl md:text-4xl font-extrabold reveal" data-reveal>製品ラインナップ</h2>
-        <p class="text-gray-400 mt-2">必要なカテゴリから最短導入。</p>
+  <section id="products" class="py-16">
+    <div class="mx-auto max-w-7xl px-4">
+      <div class="flex items-end justify-between mb-6">
+        <div>
+          <h2 class="text-3xl md:text-4xl font-extrabold reveal" data-reveal>製品ラインナップ</h2>
+          <p class="text-[#6b7280] mt-2">必要なカテゴリから最短導入。</p>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl p-2 inline-flex gap-2 mb-6">
+        <button @click="productTab='機器'; $nextTick(()=>observeReveals())" class="px-4 py-2 rounded-xl text-sm" :class="{'bg-[var(--accent2)]/40 text-black': productTab==='機器'}">機器</button>
+        <button @click="productTab='専売品'; $nextTick(()=>observeReveals())" class="px-4 py-2 rounded-xl text-sm" :class="{'bg-[var(--accent2)]/40 text-black': productTab==='専売品'}">専売品</button>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <template x-for="(p,i) in filteredProducts()" :key="p.sku">
+          <article class="glass rounded-3xl overflow-hidden flex flex-col card-hover reveal" data-reveal :style="`--d:${i*80}ms`" x-data="{qty:1}">
+            <div class="relative media-scrim">
+              <img :src="p.image" :alt="p.name" class="w-full aspect-[4/3] object-cover img-zoom"/>
+              <div class="absolute left-4 top-4 flex gap-2">
+                <span class="tag tag-on-img text-xs px-2 py-1 rounded-lg" x-text="p.badge"></span>
+                <span class="tag tag-on-img text-xs px-2 py-1 rounded-lg" x-show="p.stock === '即納'">即納</span>
+              </div>
+            </div>
+            <div class="p-5 flex-1 flex flex-col gap-3">
+              <h3 class="text-xl font-bold" x-text="p.name"></h3>
+              <p class="text-sm text-[#4b5563]" x-text="p.copy"></p>
+
+              <div class="mt-auto">
+                <template x-if="p.price">
+                  <div>
+                    <div class="text-2xl font-extrabold" x-text="`¥${p.price.toLocaleString()}（税込）`"></div>
+                    <div class="text-xs text-[#6b7280] mt-1" x-text="p.priceNote"></div>
+                  </div>
+                </template>
+                <template x-if="!p.price">
+                  <div class="text-sm text-[#374151] font-medium" x-text="p.priceMessage"></div>
+                </template>
+              </div>
+
+              <ul class="grid grid-cols-2 gap-2 text-xs text-[#374151]" x-show="p.highlights && p.highlights.length">
+                <template x-for="f in p.highlights" :key="f"><li class="tag rounded-lg px-2 py-1">✓ <span x-text="f"></span></li></template>
+              </ul>
+
+              <div class="flex flex-wrap items-center gap-2 mt-3">
+                <label class="text-xs text-[#6b7280] flex items-center gap-2">
+                  数量
+                  <input type="number" min="1" x-model.number="qty" class="w-16 bg-white/50 border border-[var(--line)] rounded-lg p-1 text-center"/>
+                </label>
+                <button class="btn px-4 py-2 rounded-xl" @click="addQuoteQty(p, qty)">見積カート</button>
+                <button class="tag px-4 py-2 rounded-xl hover:bg-[var(--accent2)]/30" x-show="productTab==='機器'" @click="addBuyQty(p, qty)">購入カート</button>
+                <button class="tag px-4 py-2 rounded-xl" @click="toggle(p)">詳細</button>
+              </div>
+            </div>
+
+            <div x-show="p.open" x-transition class="px-5 pb-6">
+              <div class="divider my-4"></div>
+              <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                <template x-for="spec in p.specs" :key="spec.k">
+                  <div class="flex justify-between gap-4"><dt class="text-[#6b7280]" x-text="spec.k"></dt><dd class="font-medium text-right" x-text="spec.v"></dd></div>
+                </template>
+              </dl>
+            </div>
+          </article>
+        </template>
       </div>
     </div>
+  </section>
 
-    <!-- タブ：機器 / 専売品 -->
-<div class="glass rounded-2xl p-2 inline-flex gap-2 mb-6">
-  <button
-    @click="productTab='機器'; $nextTick(()=>observeReveals())"
-    class="px-4 py-2 rounded-xl text-sm"
-    :class="{'bg-white/15': productTab==='機器'}"
-  >機器</button>
-
-  <button
-    @click="productTab='専売品'; $nextTick(()=>observeReveals())"
-    class="px-4 py-2 rounded-xl text-sm"
-    :class="{'bg-white/15': productTab==='専売品'}"
-  >専売品</button>
-</div>
-
-    <div class="grid md:grid-cols-3 gap-6">
-     <template x-for="(p,i) in filteredProducts()" :key="p.sku">
-  <article class="glass rounded-3xl overflow-hidden flex flex-col card-hover reveal"
-           data-reveal :style="`--d:${i*80}ms`">
-<div class="relative media-scrim">
-      <img :src="p.image" :alt="p.name" class="w-full aspect-[4/3] object-cover img-zoom"/>
-            <div class="absolute left-4 top-4 flex gap-2">
-<span class="tag tag-on-img text-xs px-2 py-1 rounded-lg" x-text="p.badge"></span>
- <span class="tag tag-on-img text-xs px-2 py-1 rounded-lg" x-show="p.stock === '即納'">即納</span>
+  <!-- ===== 導入実績 ===== -->
+  <section id="case" class="py-16">
+    <div class="mx-auto max-w-7xl px-4">
+      <h2 class="text-3xl md:text-4xl font-extrabold mb-6 reveal" data-reveal>導入実績</h2>
+      <div class="masonry" x-init="observeMasonry()">
+        <template x-for="(c,i) in data.cases" :key="c.name">
+          <article class="glass rounded-3xl overflow-hidden">
+            <img :src="c.photo" class="w-full object-cover" style="aspect-ratio:4/3"/>
+            <div class="p-4">
+              <div class="font-bold" x-text="c.name"></div>
+              <div class="text-xs text-[#6b7280]" x-text="c.area"></div>
+              <p class="mt-2 text-[#374151]" x-text="c.comment"></p>
             </div>
-          </div>
-          <div class="p-5 flex-1 flex flex-col gap-3">
-            <h3 class="text-xl font-bold" x-text="p.name"></h3>
-            <p class="text-sm text-gray-300/90" x-text="p.copy"></p>
-
-            <div class="mt-auto">
-              <template x-if="p.price">
-                <div>
-                  <div class="text-2xl font-extrabold" x-text="`¥${p.price.toLocaleString()}（税込）`"></div>
-                  <div class="text-xs text-gray-400 mt-1" x-text="p.priceNote"></div>
-                </div>
-              </template>
-              <template x-if="!p.price">
-                <div class="text-sm text-gray-300 font-medium" x-text="p.priceMessage"></div>
-              </template>
-            </div>
-
-            <ul class="grid grid-cols-2 gap-2 text-xs text-gray-300" x-show="p.highlights && p.highlights.length">
-              <template x-for="f in p.highlights" :key="f"><li class="tag rounded-lg px-2 py-1">✓ <span x-text="f"></span></li></template>
-            </ul>
-
-            <div class="flex flex-wrap gap-2 mt-3">
-              <button class="btn bg-[var(--accent)] hover:opacity-90 text-black font-semibold px-4 py-2 rounded-xl" @click="addQuote(p)">見積カート</button>
-              <button class="tag px-4 py-2 rounded-xl hover:bg-white/10" x-show="productTab==='機器'" @click="addBuy(p)">購入カート</button>
-              <button class="tag px-4 py-2 rounded-xl" @click="toggle(p)">詳細</button>
-            </div>
-          </div>
-
-          <div x-show="p.open" x-transition class="px-5 pb-6">
-            <div class="divider my-4"></div>
-            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
-              <template x-for="spec in p.specs" :key="spec.k">
-                <div class="flex justify-between gap-4"><dt class="text-gray-400" x-text="spec.k"></dt><dd class="font-medium text-right" x-text="spec.v"></dd></div>
-              </template>
-            </dl>
-          </div>
-        </article>
-      </template>
+          </article>
+        </template>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-  <!-- ===== Value / Compare / BA / FAQ (同じ) ===== -->
+  <!-- ===== 選ばれる理由 ===== -->
   <section id="value" class="py-16">
     <div class="mx-auto max-w-7xl px-4 grid md:grid-cols-3 gap-6">
       <div class="md:col-span-1 flex flex-col justify-center">
-<h2 class="text-3xl md:text-4xl font-extrabold reveal" data-reveal>選ばれる理由</h2>
-        <p class="text-gray-400 mt-3">高コスパの裏側を、すべて開示。仕組みで勝つから、価格でも勝てる。</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold reveal" data-reveal>選ばれる理由</h2>
+        <p class="text-[#6b7280] mt-3">高コスパの裏側を、すべて開示。仕組みで勝つから、価格でも勝てる。</p>
       </div>
       <div class="md:col-span-2 grid sm:grid-cols-2 gap-4">
         <template x-for="v in data.value" :key="v.title">
           <div class="glass rounded-3xl p-6">
             <h3 class="font-bold text-lg mb-1" x-text="v.title"></h3>
-            <p class="text-gray-300" x-text="v.desc"></p>
+            <p class="text-[#374151]" x-text="v.desc"></p>
           </div>
         </template>
       </div>
     </div>
   </section>
 
+  <!-- ===== 比較 ===== -->
   <section id="compare" class="py-16">
     <div class="mx-auto max-w-7xl px-4">
-<h2 class="text-3xl md:text-4xl font-extrabold mb-6 reveal" data-reveal>他社との比較</h2>
+      <h2 class="text-3xl md:text-4xl font-extrabold mb-6 reveal" data-reveal>他社との詳細比較</h2>
       <div class="overflow-x-auto glass rounded-3xl">
         <table class="min-w-full text-sm">
           <thead>
-            <tr class="text-left text-gray-300/90">
+            <tr class="text-left text-[#374151]">
               <th class="p-4">製品名</th>
               <th class="p-4">価格</th>
-              <th class="p-4">機能</th>
-              <th class="p-4">保証</th>
+              <th class="p-4">方式/出力</th>
+              <th class="p-4">冷却</th>
+              <th class="p-4">周波数</th>
+              <th class="p-4">保証・サポート</th>
+              <th class="p-4">ランニング</th>
             </tr>
           </thead>
           <tbody>
             <template x-for="row in data.compare" :key="row.name">
-              <tr class="border-t border-white/10">
+              <tr class="border-t" style="border-color:var(--line)">
                 <td class="p-4 font-medium" x-text="row.name"></td>
                 <td class="p-4" x-text="row.price"></td>
                 <td class="p-4" x-text="row.func"></td>
-                <td class="p-4" x-text="row.warranty"></td>
+                <td class="p-4" x-text="row.cooling"></td>
+                <td class="p-4" x-text="row.freq"></td>
+                <td class="p-4" x-text="row.support"></td>
+                <td class="p-4" x-text="row.running"></td>
               </tr>
             </template>
           </tbody>
@@ -288,27 +330,26 @@ html{scroll-behavior:smooth}
     </div>
   </section>
 
-  <section id="ba" class="py-16">
+  <!-- ===== 実績KPI ===== -->
+  <section id="results" class="py-16">
     <div class="mx-auto max-w-7xl px-4">
-<h2 class="text-3xl md:text-4xl font-extrabold mb-6 reveal" data-reveal>Before / After</h2>
-      <div class="grid md:grid-cols-2 gap-6">
-        <template x-for="item in data.beforeAfter" :key="item.before">
-          <div class="glass rounded-3xl p-5">
-            <div class="relative aspect-[16/9] overflow-hidden rounded-2xl">
-              <img :src="item.before" alt="before" class="absolute inset-0 w-full h-full object-cover opacity-100"/>
-              <img :src="item.after" alt="after" class="absolute inset-0 w-full h-full object-cover clip" :style="`clip-path: inset(0 ${100-progress}% 0 0);`"/>
-              <input type="range" x-model="progress" min="0" max="100" class="absolute bottom-3 left-1/2 -translate-x-1/2 w-3/4">
-            </div>
-            <div class="flex justify-between text-sm text-gray-300 mt-3"><span>Before</span><span>After</span></div>
+      <h2 class="text-3xl md:text-4xl font-extrabold mb-6 reveal" data-reveal>導入後の集客効果と売上実績</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+        <template x-for="r in data.results" :key="r.kpi">
+          <div class="glass rounded-3xl p-6">
+            <div class="text-xs text-[#6b7280]" x-text="r.kpi"></div>
+            <div class="text-3xl font-extrabold mt-1" x-text="r.value"></div>
+            <div class="text-xs text-[#6b7280] mt-1" x-text="r.note"></div>
           </div>
         </template>
       </div>
     </div>
   </section>
 
+  <!-- ===== FAQ ===== -->
   <section id="faq" class="py-16">
     <div class="mx-auto max-w-7xl px-4">
-<h2 class="text-3xl md:text-4xl font-extrabold mb-6 reveal" data-reveal>よくある質問</h2>
+      <h2 class="text-3xl md:text-4xl font-extrabold mb-6 reveal" data-reveal>よくある質問</h2>
       <div class="grid md:grid-cols-2 gap-4">
         <template x-for="q in data.faq" :key="q.q">
           <details class="glass rounded-2xl p-5 group">
@@ -316,7 +357,7 @@ html{scroll-behavior:smooth}
               <span x-text="q.q"></span>
               <span class="text-[var(--accent)] group-open:rotate-45 transition">＋</span>
             </summary>
-            <p class="text-gray-300 mt-3" x-text="q.a"></p>
+            <p class="text-[#374151] mt-3" x-text="q.a"></p>
           </details>
         </template>
       </div>
@@ -327,18 +368,18 @@ html{scroll-behavior:smooth}
   <div class="fixed bottom-4 inset-x-0 z-40">
     <div class="mx-auto max-w-7xl px-4">
       <div class="blur-bottom glass rounded-2xl p-3 flex items-center justify-between">
-        <div class="text-sm md:text-base"><strong>無料見積もり</strong>または<strong>資料請求</strong>は2分で完了。</div>
+        <div class="text-sm md:text-base"><strong>LINEで問い合わせ</strong>または<strong>資料請求</strong>は2分で完了。</div>
         <div class="flex gap-2">
-          <button @click="openLead('quote')" class="btn bg-[var(--accent)] hover:opacity-90 text-black font-semibold px-4 py-2 rounded-xl">見積もり</button>
+          <a :href="data.cta.line" class="btn text-black font-semibold px-4 py-2 rounded-xl">LINEで問い合わせ</a>
           <button @click="openLead('brochure')" class="tag px-4 py-2 rounded-xl">資料請求</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ===== Quote Drawer (複数見積) ===== -->
+  <!-- ===== Drawers & Modals ===== -->
   <aside x-show="ui.quoteOpen" x-transition class="fixed inset-y-0 right-0 w-full sm:w-[480px] z-50">
-    <div class="absolute inset-0 bg-black/60" @click="ui.quoteOpen=false"></div>
+    <div class="absolute inset-0 bg-black/20" @click="ui.quoteOpen=false"></div>
     <div class="relative h-full glass w-full ml-auto p-4 sm:p-6 overflow-y-auto">
       <div class="flex items-center justify-between">
         <h3 class="text-2xl font-extrabold">見積カート</h3>
@@ -348,8 +389,8 @@ html{scroll-behavior:smooth}
         </div>
       </div>
       <div class="mt-3">
-        <label class="text-sm text-gray-300">アクティブな見積セット</label>
-        <select class="mt-1 w-full bg-white/10 border border-white/10 rounded-xl p-2" x-model.number="activeQuoteSet">
+        <label class="text-sm text-[#6b7280]">アクティブな見積セット</label>
+        <select class="mt-1 w-full bg-white/60 border border-[var(--line)] rounded-xl p-2" x-model.number="activeQuoteSet">
           <template x-for="(s,i) in quoteSets" :key="s.id"><option :value="i" x-text="s.name"></option></template>
         </select>
       </div>
@@ -359,7 +400,7 @@ html{scroll-behavior:smooth}
             <div class="mt-4" x-show="si===activeQuoteSet">
               <div class="flex items-center justify-between">
                 <h4 class="font-bold" x-text="set.name"></h4>
-                <button class="text-sm text-red-300 hover:underline" @click="removeQuoteSet(si)">セット削除</button>
+                <button class="text-sm text-red-600 hover:underline" @click="removeQuoteSet(si)">セット削除</button>
               </div>
               <div class="mt-2 space-y-3" x-show="set.items.length">
                 <template x-for="(item,idx) in set.items" :key="item.sku">
@@ -367,23 +408,23 @@ html{scroll-behavior:smooth}
                     <img :src="item.image" class="w-16 h-16 rounded-xl object-cover"/>
                     <div class="flex-1">
                       <div class="font-semibold" x-text="item.name"></div>
-                      <div class="text-sm text-gray-400" x-text="`¥${item.price.toLocaleString()}`"></div>
+                      <div class="text-sm text-[#6b7280]" x-text="`¥${item.price.toLocaleString()}`"></div>
                     </div>
                     <div class="flex items-center gap-2">
-                      <input type="number" class="w-16 bg-white/10 border border-white/10 rounded-lg p-1 text-center" min="1" x-model.number="item.qty">
+                      <input type="number" class="w-16 bg-white/60 border border-[var(--line)] rounded-lg p-1 text-center" min="1" x-model.number="item.qty">
                       <button class="tag px-2 py-1 rounded-lg" @click="removeQuoteItem(si, idx)">削除</button>
                     </div>
                   </div>
                 </template>
               </div>
-              <p class="text-sm text-gray-400 mt-4" x-show="!set.items.length">このセットには商品がありません。</p>
+              <p class="text-sm text-[#6b7280] mt-4" x-show="!set.items.length">このセットには商品がありません。</p>
               <div class="divider my-4"></div>
               <div class="flex items-center justify-between">
-                <div class="text-sm text-gray-300">小計</div>
+                <div class="text-sm text-[#6b7280]">小計</div>
                 <div class="text-xl font-extrabold" x-text="`¥${quoteSubtotal(si).toLocaleString()}`"></div>
               </div>
               <div class="mt-3 grid grid-cols-2 gap-2">
-                <button class="btn bg-[var(--accent)] text-black font-semibold px-4 py-3 rounded-xl" @click="sendQuote(si)">この見積を送信</button>
+                <button class="btn text-black font-semibold px-4 py-3 rounded-xl" @click="sendQuote(si)">この見積を送信</button>
               </div>
             </div>
           </template>
@@ -394,9 +435,8 @@ html{scroll-behavior:smooth}
     </div>
   </aside>
 
-  <!-- ===== Buy Drawer ===== -->
   <aside x-show="ui.buyOpen" x-transition class="fixed inset-y-0 right-0 w-full sm:w-[480px] z-50">
-    <div class="absolute inset-0 bg-black/60" @click="ui.buyOpen=false"></div>
+    <div class="absolute inset-0 bg-black/20" @click="ui.buyOpen=false"></div>
     <div class="relative h-full glass w-full ml-auto p-4 sm:p-6 overflow-y-auto">
       <div class="flex items-center justify-between">
         <h3 class="text-2xl font-extrabold">購入カート</h3>
@@ -408,43 +448,43 @@ html{scroll-behavior:smooth}
             <img :src="item.image" class="w-16 h-16 rounded-xl object-cover"/>
             <div class="flex-1">
               <div class="font-semibold" x-text="item.name"></div>
-              <div class="text-sm text-gray-400" x-text="`¥${item.price.toLocaleString()}`"></div>
+              <div class="text-sm text-[#6b7280]" x-text="`¥${item.price.toLocaleString()}`"></div>
             </div>
             <div class="flex items-center gap-2">
-              <input type="number" class="w-16 bg-white/10 border border-white/10 rounded-lg p-1 text-center" min="1" x-model.number="item.qty">
+              <input type="number" class="w-16 bg-white/60 border border-[var(--line)] rounded-lg p-1 text-center" min="1" x-model.number="item.qty">
               <button class="tag px-2 py-1 rounded-lg" @click="removeBuyItem(idx)">削除</button>
             </div>
           </div>
         </template>
       </div>
-      <p class="text-sm text-gray-400 mt-4" x-show="!buyCart.length">カートに商品がありません。</p>
+      <p class="text-sm text-[#6b7280] mt-4" x-show="!buyCart.length">カートに商品がありません。</p>
       <div class="divider my-6"></div>
       <div class="flex items-center justify-between">
-        <div class="text-sm text-gray-300">小計</div>
+        <div class="text-sm text-[#6b7280]">小計</div>
         <div class="text-xl font-extrabold" x-text="`¥${buySubtotal().toLocaleString()}`"></div>
       </div>
-      <button class="mt-4 btn bg-emerald-400 text-black font-semibold w-full px-4 py-3 rounded-xl" @click="checkout()">購入手続きへ</button>
+      <button class="mt-4 btn text-black font-semibold w-full px-4 py-3 rounded-xl" @click="checkout()">購入手続きへ</button>
     </div>
   </aside>
 
-  <!-- ===== Lead Modal (既存) ===== -->
+  <!-- ===== Lead Modal ===== -->
   <div x-show="modal.open" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-black/70" @click="modal.open=false"></div>
+    <div class="absolute inset-0 bg-black/20" @click="modal.open=false"></div>
     <div class="relative w-full max-w-xl glass rounded-3xl p-6">
       <h3 class="text-2xl font-extrabold mb-2" x-text="modal.title"></h3>
-      <p class="text-gray-300 mb-4" x-text="modal.desc"></p>
+      <p class="text-[#374151] mb-4" x-text="modal.desc"></p>
       <form @submit.prevent="submitLead">
         <div class="grid md:grid-cols-2 gap-4">
-          <label class="text-sm">サロン名<input type="text" class="w-full mt-1 rounded-xl bg-white/10 border border-white/10 p-3" x-model="form.salon" required></label>
-          <label class="text-sm">ご担当者名<input type="text" class="w-full mt-1 rounded-xl bg-white/10 border border-white/10 p-3" x-model="form.name" required></label>
-          <label class="text-sm md:col-span-2">メール<input type="email" class="w-full mt-1 rounded-xl bg-white/10 border border-white/10 p-3" x-model="form.email" required></label>
-          <label class="text-sm md:col-span-2">電話番号<input type="tel" class="w-full mt-1 rounded-xl bg-white/10 border border-white/10 p-3" x-model="form.tel"></label>
-          <label class="text-sm md:col-span-2" x-show="modal.type==='quote'">ご希望の機器<input type="text" class="w-full mt-1 rounded-xl bg-white/10 border border-white/10 p-3" x-model="form.product" placeholder="例：photomedicell"></label>
-          <label class="text-sm md:col-span-2">備考<textarea class="w-full mt-1 rounded-xl bg-white/10 border border-white/10 p-3" rows="4" x-model="form.note"></textarea></label>
+          <label class="text-sm">サロン名<input type="text" class="w-full mt-1 rounded-xl bg-white/60 border border-[var(--line)] p-3" x-model="form.salon" required></label>
+          <label class="text-sm">ご担当者名<input type="text" class="w-full mt-1 rounded-xl bg-white/60 border border-[var(--line)] p-3" x-model="form.name" required></label>
+          <label class="text-sm md:col-span-2">メール<input type="email" class="w-full mt-1 rounded-xl bg-white/60 border border-[var(--line)] p-3" x-model="form.email" required></label>
+          <label class="text-sm md:col-span-2">電話番号<input type="tel" class="w-full mt-1 rounded-xl bg-white/60 border border-[var(--line)] p-3" x-model="form.tel"></label>
+          <label class="text-sm md:col-span-2" x-show="modal.type==='quote'">ご希望の機器<input type="text" class="w-full mt-1 rounded-xl bg-white/60 border border-[var(--line)] p-3" x-model="form.product" placeholder="例：photomedicell"></label>
+          <label class="text-sm md:col-span-2">備考<textarea class="w-full mt-1 rounded-xl bg-white/60 border border-[var(--line)] p-3" rows="4" x-model="form.note"></textarea></label>
         </div>
         <div class="mt-4 flex items-center justify-between">
-          <div class="text-xs text-gray-400">送信でプライバシーポリシーに同意したものとみなします。</div>
-          <button class="btn bg-[var(--accent)] hover:opacity-90 text-black font-semibold px-6 py-3 rounded-2xl">送信</button>
+          <div class="text-xs text-[#6b7280]">送信でプライバシーポリシーに同意したものとみなします。</div>
+          <button class="btn text-black font-semibold px-6 py-3 rounded-2xl">送信</button>
         </div>
       </form>
     </div>
@@ -452,39 +492,38 @@ html{scroll-behavior:smooth}
 
   <!-- ===== Checkout Modal ===== -->
   <div x-show="ui.checkoutOpen" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-black/70" @click="ui.checkoutOpen=false"></div>
+    <div class="absolute inset-0 bg-black/20" @click="ui.checkoutOpen=false"></div>
     <div class="relative w-full max-w-xl glass rounded-3xl p-6">
       <h3 class="text-2xl font-extrabold mb-4">購入手続き</h3>
       <form @submit.prevent="submitOrder">
         <div class="grid md:grid-cols-2 gap-4">
-          <label class="text-sm">ご担当者名<input required x-model="order.name" class="w-full mt-1 rounded-xl bg-white/10 border border-white/10 p-3"/></label>
-          <label class="text-sm">メール<input required type="email" x-model="order.email" class="w-full mt-1 rounded-xl bg-white/10 border border-white/10 p-3"/></label>
-          <label class="text-sm md:col-span-2">電話番号<input x-model="order.tel" class="w-full mt-1 rounded-xl bg-white/10 border border-white/10 p-3"/></label>
-          <label class="text-sm md:col-span-2">配送先住所<textarea required x-model="order.address" rows="3"
-  class="w-full mt-1 rounded-xl bg-white/10 border border-white/10 p-3"></textarea></label>
-          <label class="text-sm md:col-span-2">備考<textarea x-model="order.note" rows="3" class="w-full mt-1 rounded-xl bg-white/10 border border-white/10 p-3"></textarea></label>
+          <label class="text-sm">ご担当者名<input required x-model="order.name" class="w-full mt-1 rounded-xl bg-white/60 border border-[var(--line)] p-3"/></label>
+          <label class="text-sm">メール<input required type="email" x-model="order.email" class="w-full mt-1 rounded-xl bg-white/60 border border-[var(--line)] p-3"/></label>
+          <label class="text-sm md:col-span-2">電話番号<input x-model="order.tel" class="w-full mt-1 rounded-xl bg-white/60 border border-[var(--line)] p-3"/></label>
+          <label class="text-sm md:col-span-2">配送先住所<textarea required x-model="order.address" rows="3" class="w-full mt-1 rounded-xl bg-white/60 border border-[var(--line)] p-3"></textarea></label>
+          <label class="text-sm md:col-span-2">備考<textarea x-model="order.note" rows="3" class="w-full mt-1 rounded-xl bg-white/60 border border-[var(--line)] p-3"></textarea></label>
         </div>
         <div class="mt-4 flex items-center justify-between">
-          <div class="text-sm text-gray-300">合計 <span class="font-extrabold" x-text="`¥${buySubtotal().toLocaleString()}`"></span></div>
-          <button class="btn bg-emerald-400 text-black font-semibold px-6 py-3 rounded-2xl">注文を送信</button>
+          <div class="text-sm text-[#374151]">合計 <span class="font-extrabold" x-text="`¥${buySubtotal().toLocaleString()}`"></span></div>
+          <button class="btn text-black font-semibold px-6 py-3 rounded-2xl">注文を送信</button>
         </div>
       </form>
-      <p class="text-xs text-gray-400 mt-3">※ 決済は請求書/銀行振込を想定。StripeやSquareへの切替も可（後で導入可能な作り）。</p>
+      <p class="text-xs text-[#6b7280] mt-3">※ 決済は請求書/銀行振込を想定。StripeやSquareへの切替も可（後で導入可能な作り）。</p>
     </div>
   </div>
 
   <!-- ===== Footer ===== -->
   <footer class="pt-20 pb-10">
-    <div class="mx-auto max-w-7xl px-4 text-sm text-gray-400">
+    <div class="mx-auto max-w-7xl px-4 text-sm text-[#6b7280]">
       <div class="divider mb-6"></div>
       <div class="flex flex-wrap gap-3 items-center justify-between">
         <div class="flex items-center gap-3">
-          <img :src="data.brand.logo" alt="logo" class="w-8 h-8 rounded-xl object-cover"/>
-          <span>© <span x-text="new Date().getFullYear()"></span> <span x-text="data.brand.name"></span></span>
+          <img :src="data.brand.logo" alt="logo" class="w-8 h-8 object-contain"/>
+          <span>© <span x-text="new Date().getFullYear()"></span> Verviii</span>
         </div>
         <div class="flex gap-4">
-          <a href="#" class="hover:text-white">特商法</a>
-          <a href="#" class="hover:text-white">プライバシーポリシー</a>
+          <a href="#" class="hover:text-black">特商法</a>
+          <a href="#" class="hover:text-black">プライバシーポリシー</a>
         </div>
       </div>
     </div>
@@ -495,172 +534,67 @@ html{scroll-behavior:smooth}
   {
     "meta": {
       "title": "美は、戦略だ。｜プロ機器を現実的な価格で",
-      "description": "photomedicell ほか美容機器の直販サイト。最短1週間、3年保証、SNS集客講習つき。価格・性能・サポートの3拍子。"
+      "description": "Photomedicell ほか美容機器の直販サイト。最短1週間、3年保証、SNS集客講習つき。価格・性能・サポートの3拍子。"
     },
     "brand": {
-      "name": "NOI BEAUTY",
-      "logo": "https://images.unsplash.com/photo-1545235617-9465d2a55698?q=80&w=300&auto=format&fit=crop",
+      "name": "Verviii",
+      "logo": "https://dummyimage.com/200x40/ffffff/000000.png&text=Verviii",
       "tagline": "サロンDXで、勝てる美容経営。"
     },
     "cta": {
       "line": "https://line.me/ja/",
-      "tel": "tel:070-3965-5563",
-      "telLabel": "070-3965-5563",
+      "tel": "tel:000-0000-0000",
+      "telLabel": "000-0000-0000",
       "quoteEmail": "info@example.com",
       "orderEmail": "order@example.com"
     },
     "hero": {
       "lead": "導入から集客・運用までを標準サポート。『最短回収』を設計したプロダクトです。",
-      "image": "https://images.unsplash.com/photo-1596461404969-9ae70b7b0cd5?q=80&w=1600&auto=format&fit=crop",
-      "monthly": 40000,
+      "bg": [
+        "https://images.unsplash.com/photo-1512207846876-bb54ef5056a5?q=80&w=1920&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=1920&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1920&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=1920&auto=format&fit=crop"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1596461404969-9ae70b7b0cd5?q=80&w=1600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1580584128409-012d1e761a7b?q=80&w=1600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1556228578-97c28c7b6757?q=80&w=1600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1601333144085-0c0b13f8b4bc?q=80&w=1600&auto=format&fit=crop"
+      ],
       "stats": {"units": "300+", "roi": 6}
     },
-    "socialProof": [
-      "https://dummyimage.com/200x60/ffffff/000000.png&text=Salon+A",
-      "https://dummyimage.com/200x60/ffffff/000000.png&text=Salon+B",
-      "https://dummyimage.com/200x60/ffffff/000000.png&text=Salon+C",
-      "https://dummyimage.com/200x60/ffffff/000000.png&text=Salon+D",
-      "https://dummyimage.com/200x60/ffffff/000000.png&text=Salon+E"
+    "products": [
+      {"type":"機器","sku":"PM-001","name":"Photomedicell","copy":"〜多くの要望に答えられる革命脱毛器〜","badge":"ベストセラー","price":2800000,"priceNote":"※ 分割・リース可","stock":"即納","image":"https://images.unsplash.com/photo-1599050751795-5cdaaa1ffc51?q=80&w=1200&auto=format&fit=crop","highlights":["SHR/OPT + RF","3,000W高出力","大型チラー搭載","3年保証"],"specs":[{"k":"搭載脱毛方式","v":"SHR / IPL（OPT） + RF / E-light"},{"k":"パワー","v":"10〜50J/cm²"},{"k":"波長","v":"430/530/590/640/690nm 他"},{"k":"最大出力","v":"3,000W"},{"k":"照射面積","v":"10×50mm / 15×50mm"},{"k":"周波数","v":"1〜10Hz 調節可"},{"k":"重量","v":"28kg"}],"open":false},
+      {"type":"機器","sku":"CL-001","name":"Celllook","copy":"〜効果の可視化と顧客満足度MAXへ〜","badge":"人気","price":2100000,"priceNote":"※ 分割・リース可","stock":"即納","image":"https://images.unsplash.com/photo-1580584128409-012d1e761a7b?q=80&w=1200&auto=format&fit=crop","highlights":["効果可視化","顧客満足度UP","直感UI"],"specs":[{"k":"モード","v":"フェイシャル / スキン解析"},{"k":"重量","v":"20kg"}],"open":false},
+      {"type":"機器","sku":"DM-A","name":"機器（仮）A","copy":"COMING SOON","badge":"COMING SOON","price":1500000,"priceNote":"※ 価格は仮","stock":"取寄","image":"https://images.unsplash.com/photo-1556228578-97c28c7b6757?q=80&w=1200&auto=format&fit=crop","highlights":["低消費電力","簡単メンテ"],"specs":[{"k":"方式","v":"IPL"}],"open":false},
+      {"type":"機器","sku":"DM-B","name":"機器（仮）B","copy":"COMING SOON","badge":"COMING SOON","price":1200000,"priceNote":"※ 価格は仮","stock":"取寄","image":"https://images.unsplash.com/photo-1601333144085-0c0b13f8b4bc?q=80&w=1200&auto=format&fit=crop","highlights":["軽量","静音"],"specs":[{"k":"方式","v":"IPL"}],"open":false},
+      {"type":"機器","sku":"DM-C","name":"機器（仮）C","copy":"COMING SOON","badge":"COMING SOON","price":900000,"priceNote":"※ 価格は仮","stock":"取寄","image":"https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1200&auto=format&fit=crop","highlights":["ベーシック"],"specs":[{"k":"方式","v":"IPL"}],"open":false},
+      {"type":"専売品","sku":"EX-GP","name":"ゴールドピーリング","copy":"〜結果重視で現実が理想を越える〜","badge":"専売品","price":null,"priceMessage":"ロット販売につきお問い合わせください","stock":"即納","image":"https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&auto=format&fit=crop","highlights":["業務用","高満足度"],"specs":[],"open":false},
+      {"type":"専売品","sku":"EX-IVM","name":"IN VITI MIST","copy":"〜肌を守る6つの無添加〜","badge":"専売品","price":null,"priceMessage":"ロット販売につきお問い合わせください","stock":"即納","image":"https://images.unsplash.com/photo-1545237017-3a3fc540cd0a?q=80&w=1200&auto=format&fit=crop","highlights":["無添加","ミスト"],"specs":[],"open":false},
+      {"type":"専売品","sku":"EX-UVS","name":"VITI UV SERUM","copy":"〜世界最高水準UVカット値〜","badge":"専売品","price":null,"priceMessage":"ロット販売につきお問い合わせください","stock":"即納","image":"https://images.unsplash.com/photo-1585238342028-4bbc2a4e13d8?q=80&w=1200&auto=format&fit=crop","highlights":["高UVカット"],"specs":[],"open":false}
     ],
-   "products": [
-  {
-    "type":"機器",
-    "sku":"PM-001",
-    "name":"Photomedicell",
-    "copy":"〜多くの要望に答えられる革命脱毛器〜",
-    "badge":"ベストセラー",
-    "price":2800000,
-    "priceNote":"※ 分割・リース可",
-    "stock":"即納",
-    "image":"https://images.unsplash.com/photo-1599050751795-5cdaaa1ffc51?q=80&w=1200&auto=format&fit=crop",
-    "highlights":["SHR/OPT + RF","3,000W高出力","大型チラー搭載","3年保証"],
-    "specs":[
-      {"k":"搭載脱毛方式","v":"SHR / IPL（OPT） + RF / E-light"},
-      {"k":"パワー","v":"10〜50J/cm²"},
-      {"k":"波長","v":"430/530/590/640/690nm 他"},
-      {"k":"最大出力","v":"3,000W"},
-      {"k":"照射面積","v":"10×50mm / 15×50mm"},
-      {"k":"周波数","v":"1〜10Hz 調節可"},
-      {"k":"重量","v":"28kg"}
+    "cases": [
+      {"name":"Salon A","area":"東京・渋谷","comment":"導入3ヶ月で月売上+120万円、男性客比率が1.8倍に。","photo":"https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop"},
+      {"name":"Salon B","area":"大阪・梅田","comment":"インスタ連携×体験導線で新規月45件を安定獲得。","photo":"https://images.unsplash.com/photo-1556229010-aa3b66e8f837?q=80&w=1200&auto=format&fit=crop"},
+      {"name":"Salon C","area":"福岡・薬院","comment":"回転率が上がり、スタッフ1名でも高稼働を実現。","photo":"https://images.unsplash.com/photo-1603287681836-b174ce5074c2?q=80&w=1200&auto=format&fit=crop"},
+      {"name":"Salon D","area":"名古屋・栄","comment":"フェイシャル提案の幅が広がり客単価+4,800円。","photo":"https://images.unsplash.com/photo-1596464716121-8b6322dcbcf8?q=80&w=1200&auto=format&fit=crop"}
     ],
-    "open":false
-  },
-  {
-    "type":"機器",
-    "sku":"CL-001",
-    "name":"Celllook",
-    "copy":"〜効果の可視化と顧客満足度MAXへ〜",
-    "badge":"人気",
-    "price":2100000,
-    "priceNote":"※ 分割・リース可",
-    "stock":"即納",
-    "image":"https://images.unsplash.com/photo-1580584128409-012d1e761a7b?q=80&w=1200&auto=format&fit=crop",
-    "highlights":["効果可視化","顧客満足度UP","直感UI"],
-    "specs":[
-      {"k":"モード","v":"フェイシャル / スキン解析"},
-      {"k":"重量","v":"20kg"}
-    ],
-    "open":false
-  },
-  {
-    "type":"機器",
-    "sku":"DM-A",
-    "name":"機器（仮）A",
-    "copy":"COMING SOON",
-    "badge":"COMING SOON",
-    "price":1500000,
-    "priceNote":"※ 価格は仮",
-    "stock":"取寄",
-    "image":"https://images.unsplash.com/photo-1556228578-97c28c7b6757?q=80&w=1200&auto=format&fit=crop",
-    "highlights":["低消費電力","簡単メンテ"],
-    "specs":[{"k":"方式","v":"IPL"}],
-    "open":false
-  },
-  {
-    "type":"機器",
-    "sku":"DM-B",
-    "name":"機器（仮）B",
-    "copy":"COMING SOON",
-    "badge":"COMING SOON",
-    "price":1200000,
-    "priceNote":"※ 価格は仮",
-    "stock":"取寄",
-    "image":"https://images.unsplash.com/photo-1601333144085-0c0b13f8b4bc?q=80&w=1200&auto=format&fit=crop",
-    "highlights":["軽量","静音"],
-    "specs":[{"k":"方式","v":"IPL"}],
-    "open":false
-  },
-  {
-    "type":"機器",
-    "sku":"DM-C",
-    "name":"機器（仮）C",
-    "copy":"COMING SOON",
-    "badge":"COMING SOON",
-    "price":900000,
-    "priceNote":"※ 価格は仮",
-    "stock":"取寄",
-    "image":"https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1200&auto=format&fit=crop",
-    "highlights":["ベーシック"],
-    "specs":[{"k":"方式","v":"IPL"}],
-    "open":false
-  },
-
-  {
-    "type":"専売品",
-    "sku":"EX-GP",
-    "name":"ゴールドピーリング",
-    "copy":"〜結果重視で現実が理想を越える〜",
-    "badge":"専売品",
-    "price":null,
-    "priceMessage":"ロット販売につきお問い合わせください",
-    "stock":"即納",
-    "image":"https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&auto=format&fit=crop",
-    "highlights":["業務用","高満足度"],
-    "specs":[],
-    "open":false
-  },
-  {
-    "type":"専売品",
-    "sku":"EX-IVM",
-    "name":"IN VITI MIST",
-    "copy":"〜肌を守る6つの無添加〜",
-    "badge":"専売品",
-    "price":null,
-    "priceMessage":"ロット販売につきお問い合わせください",
-    "stock":"即納",
-    "image":"https://images.unsplash.com/photo-1545237017-3a3fc540cd0a?q=80&w=1200&auto=format&fit=crop",
-    "highlights":["無添加","ミスト"],
-    "specs":[],
-    "open":false
-  },
-  {
-    "type":"専売品",
-    "sku":"EX-UVS",
-    "name":"VITI UV SERUM",
-    "copy":"〜世界最高水準UVカット値〜",
-    "badge":"専売品",
-    "price":null,
-    "priceMessage":"ロット販売につきお問い合わせください",
-    "stock":"即納",
-    "image":"https://images.unsplash.com/photo-1585238342028-4bbc2a4e13d8?q=80&w=1200&auto=format&fit=crop",
-    "highlights":["高UVカット"],
-    "specs":[],
-    "open":false
-  }
-],
     "value": [
       {"title":"工場提携×直販","desc":"中間マージンを削減し、品質はそのままに価格を最適化。利益ではなく価値で勝つ。"},
       {"title":"アフターケアまで伴走","desc":"機器納入だけで終わらない。SNS講習・HP作成・CRM導入まで一気通貫サポート。"},
-      {"title":"なににしよーーーーー","desc":"なににしよーーーーーー"},
-      {"title":"なににしよーーーーーーー","desc":"なににしよーーーーーーーーー"}
+      {"title":"冷却と安定照射","desc":"大型チラーと温度監視で熱ダレを抑制。長時間運転でも安定。"},
+      {"title":"現場UI","desc":"直感操作で新人でも迷わない。プリセット多めで時短運用。"}
     ],
     "compare": [
-      {"name":"当社製品","price":"180〜280万円","func":"脱毛/フェイシャル","warranty":"3年"},
-      {"name":"他社A","price":"350〜400万円","func":"脱毛のみ","warranty":"1年"},
-      {"name":"他社B","price":"350万円","func":"フェイシャルのみ","warranty":"1年"}
+      {"name":"Photomedicell","price":"180〜280万円","func":"SHR/OPT + RF（最大50J）","cooling":"大型チラー+サファイア先端","freq":"1〜10Hz","support":"3年保証/代替機/講習","running":"約¥8〜12/ショット"},
+      {"name":"他社A","price":"350〜400万円","func":"SHRのみ（〜40J）","cooling":"空冷","freq":"〜6Hz","support":"1年保証","running":"約¥15/ショット"},
+      {"name":"他社B","price":"350万円","func":"フェイシャル特化（IPL）","cooling":"小型チラー","freq":"〜5Hz","support":"1年保証","running":"約¥18/ショット"}
     ],
-    "beforeAfter": [
-      {"before":"https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1600&auto=format&fit=crop","after":"https://images.unsplash.com/photo-1545235617-9465d2a55698?q=80&w=1600&auto=format&fit=crop"}
+    "results": [
+      {"kpi":"平均月次新規数","value":"+42件","note":"導入サロン中央値（3ヶ月）"},
+      {"kpi":"客単価（フェイシャル）","value":"+¥4,500","note":"セット提案でアップセル"},
+      {"kpi":"投資回収期間","value":"約6ヶ月","note":"リース/現金混在の中央値"}
     ],
     "faq": [
       {"q":"ローン審査は厳しいですか？","a":"個人事業主様でも多く通過されています。金融機関や審査会社のご紹介も可能です。"},
@@ -672,156 +606,164 @@ html{scroll-behavior:smooth}
   </script>
 
   <script>
-function app(){
-  return {
-    // ---- state ----
-    data:{}, products:[], progress:50, productTab:'機器',
-    ui:{quoteOpen:false, buyOpen:false, checkoutOpen:false},
-    modal:{open:false, type:'quote', title:'', desc:''},
-    form:{salon:'', name:'', email:'', tel:'', note:'', product:''},
-    quoteSets:[], activeQuoteSet:0, buyCart:[],
-    order:{name:'', email:'', tel:'', address:'', note:''},
+  function app(){
+    return {
+      // ---- state ----
+      data:{}, products:[], progress:50, productTab:'機器',
+      ui:{quoteOpen:false, buyOpen:false, checkoutOpen:false, introVisible:true},
+      modal:{open:false, type:'quote', title:'', desc:''},
+      form:{salon:'', name:'', email:'', tel:'', note:'', product:''},
+      quoteSets:[], activeQuoteSet:0, buyCart:[],
+      order:{name:'', email:'', tel:'', address:'', note:''},
 
-    // ---- helpers ----
-    observeReveals(){
-      const els = document.querySelectorAll('[data-reveal]');
-      const io = new IntersectionObserver((entries)=>{
-        entries.forEach(e=>{
-          if(e.isIntersecting){
-            e.target.classList.add('is-visible');
-            io.unobserve(e.target);
-          }
+      // ---- helpers ----
+      observeReveals(){
+        const els = document.querySelectorAll('[data-reveal]');
+        const io = new IntersectionObserver((entries)=>{
+          entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); } });
+        }, { threshold: 0.15, rootMargin: "0px 0px -5% 0px" });
+        els.forEach(el => io.observe(el));
+      },
+      observeMasonry(){
+        const cards = document.querySelectorAll('.masonry > article');
+        const io = new IntersectionObserver((es)=>{
+          es.forEach(e=>{
+            if(e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); }
+          })
+        }, {threshold:.15});
+        cards.forEach((c,i)=>{
+          c.style.transitionDelay = (Math.random()*300|0)+'ms';
+          io.observe(c);
         });
-      }, { threshold: 0.15, rootMargin: "0px 0px -5% 0px" });
-      els.forEach(el => io.observe(el));
-    },
-    onScroll(){
-      const h=document.documentElement;
-      const scrolled=(h.scrollTop)/(h.scrollHeight-h.clientHeight)*100||0;
-      document.documentElement.style.setProperty('--scroll', scrolled.toFixed(2));
-    },
+      },
+      onScroll(){
+        const h=document.documentElement;
+        const scrolled=(h.scrollTop)/(h.scrollHeight-h.clientHeight)*100||0;
+        document.documentElement.style.setProperty('--scroll', scrolled.toFixed(2));
+      },
 
-    // ---- lifecycle ----
-    init(){
-      try{ this.data = JSON.parse(document.getElementById('data').textContent) }catch(e){ console.error(e) }
-      this.products = this.data.products
+      // ---- lifecycle ----
+      init(){
+        try{ this.data = JSON.parse(document.getElementById('data').textContent) }catch(e){ console.error(e) }
+        this.products = this.data.products;
 
-      // restore
-      const qs = localStorage.getItem('quoteSets');
-      const bc = localStorage.getItem('buyCart');
-      this.quoteSets = qs ? JSON.parse(qs) : [{id: crypto.randomUUID(), name:'見積A', items:[] }];
-      this.buyCart   = bc ? JSON.parse(bc) : [];
-      this.activeQuoteSet = 0;
+        // Intro once per session
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const shown = sessionStorage.getItem('introDone') === '1';
+        if(prefersReduced || shown){ this.ui.introVisible = false; }
+        else { setTimeout(()=>{ this.ui.introVisible=false; sessionStorage.setItem('introDone','1') }, 1400); }
+        this.$watch('ui.introVisible', v => document.body.classList.toggle('overflow-hidden', v))
 
-      this.$nextTick(()=>{
-        this.observeReveals();
-        this.onScroll();
-        window.addEventListener('scroll', this.onScroll.bind(this), { passive:true });
-      });
+        // restore
+        const qs = localStorage.getItem('quoteSets');
+        const bc = localStorage.getItem('buyCart');
+        this.quoteSets = qs ? JSON.parse(qs) : [{id: crypto.randomUUID(), name:'見積A', items:[] }];
+        this.buyCart   = bc ? JSON.parse(bc) : [];
+        this.activeQuoteSet = 0;
 
-      // 再描画時にアニメ監視を張り直す
-      this.$watch('productTab', () => this.$nextTick(() => this.observeReveals()));
-      this.$watch('products',  () => this.$nextTick(() => this.observeReveals()));
-    },
-    persist(){
-      localStorage.setItem('quoteSets', JSON.stringify(this.quoteSets));
-      localStorage.setItem('buyCart', JSON.stringify(this.buyCart));
-    },
+        this.$nextTick(()=>{
+          this.observeReveals();
+          this.onScroll();
+          window.addEventListener('scroll', this.onScroll.bind(this), { passive:true });
+          this.observeMasonry();
+        });
 
-    // ---- view actions ----
-    sortBy(t){
-      if(t==='priceUp'){ this.products=[...this.products].sort((a,b)=>(a.price??0)-(b.price??0)) }
-      else if(t==='priceDown'){ this.products=[...this.products].sort((a,b)=>(b.price??0)-(a.price??0)) }
-      this.$nextTick(()=> this.observeReveals());
-    },
-    filteredProducts(){ return this.products.filter(p => p.type === this.productTab) },
-    toggle(p){ p.open = !p.open },
+        this.$watch('productTab', () => this.$nextTick(() => this.observeReveals()));
+        this.$watch('products',  () => this.$nextTick(() => this.observeReveals()));
+      },
+      persist(){
+        localStorage.setItem('quoteSets', JSON.stringify(this.quoteSets));
+        localStorage.setItem('buyCart', JSON.stringify(this.buyCart));
+      },
 
-    // ---- quote cart ----
-    openQuoteDrawer(){ this.ui.quoteOpen = true },
-    addQuoteSet(){
-      this.quoteSets.push({id:crypto.randomUUID(), name:`見積${String.fromCharCode(65+this.quoteSets.length)}`, items:[]});
-      this.activeQuoteSet = this.quoteSets.length - 1;
-      this.persist();
-    },
-    removeQuoteSet(i){
-      this.quoteSets.splice(i,1);
-      if(this.activeQuoteSet>=this.quoteSets.length) this.activeQuoteSet=0;
-      if(!this.quoteSets.length) this.addQuoteSet();
-      this.persist();
-    },
-    addQuote(p){
-      const set=this.quoteSets[this.activeQuoteSet];
-      const exist=set.items.find(it=>it.sku===p.sku);
-      if(exist){ exist.qty=(exist.qty||1)+1 } else { set.items.push({...p, qty:1}) }
-      this.persist();
-      alert('見積もりカートに追加しました！');
-    },
-    removeQuoteItem(si, idx){ this.quoteSets[si].items.splice(idx,1); this.persist() },
-    quoteSubtotal(si){ return this.quoteSets[si].items.reduce((s,it)=>s+((it.price??0)*(it.qty||1)),0) },
-    quoteCount(){ return this.quoteSets.reduce((n,s)=>n+s.items.reduce((m,it)=>m+(it.qty||1),0),0) },
+      // ---- view actions ----
+      sortBy(t){
+        if(t==='priceUp'){ this.products=[...this.products].sort((a,b)=>(a.price??0)-(b.price??0)) }
+        else if(t==='priceDown'){ this.products=[...this.products].sort((a,b)=>(b.price??0)-(a.price??0)) }
+        this.$nextTick(()=> this.observeReveals());
+      },
+      filteredProducts(){ return this.products.filter(p => p.type === this.productTab) },
+      toggle(p){ p.open = !p.open },
 
-    // ---- buy cart ----
-    openBuyDrawer(){ this.ui.buyOpen=true },
-    addBuy(p){
-      const ex=this.buyCart.find(it=>it.sku===p.sku);
-      if(ex){ ex.qty=(ex.qty||1)+1 } else { this.buyCart.push({...p, qty:1}) }
-      this.persist(); this.ui.buyOpen=true
-    },
-    removeBuyItem(i){ this.buyCart.splice(i,1); this.persist() },
-    buySubtotal(){ return this.buyCart.reduce((s,it)=>s+((it.price??0)*(it.qty||1)),0) },
-    buyCount(){ return this.buyCart.reduce((n,it)=>n+(it.qty||1),0) },
+      // ---- quote cart ----
+      openQuoteDrawer(){ this.ui.quoteOpen = true },
+      addQuoteSet(){
+        this.quoteSets.push({id:crypto.randomUUID(), name:`見積${String.fromCharCode(65+this.quoteSets.length)}`, items:[]});
+        this.activeQuoteSet = this.quoteSets.length - 1;
+        this.persist();
+      },
+      removeQuoteSet(i){
+        this.quoteSets.splice(i,1);
+        if(this.activeQuoteSet>=this.quoteSets.length) this.activeQuoteSet=0;
+        if(!this.quoteSets.length) this.addQuoteSet();
+        this.persist();
+      },
+      addQuote(p){ this.addQuoteQty(p,1) },
+      removeQuoteItem(si, idx){ this.quoteSets[si].items.splice(idx,1); this.persist() },
+      quoteSubtotal(si){ return this.quoteSets[si].items.reduce((s,it)=>s+((it.price??0)*(it.qty||1)),0) },
+      quoteCount(){ return this.quoteSets.reduce((n,s)=>n+s.items.reduce((m,it)=>m+(it.qty||1),0),0) },
 
-    // ---- lead & order ----
-    openLead(type, product){
-      this.modal.type=type; this.modal.open=true;
-      this.form={salon:'', name:'', email:'', tel:'', note:'', product:product||''};
-      this.modal.title= type==='quote'? '無料見積もり':'資料請求';
-      this.modal.desc=  type==='quote'? '2分で完了。担当者から最短当日中にご連絡します。':'最新カタログをメールでお送りします。';
-    },
-    submitLead(){
-      const payload={...this.form, type:this.modal.type, ts:new Date().toISOString()};
-      const mailto=`mailto:${encodeURIComponent(this.data.cta.quoteEmail)}?subject=${encodeURIComponent('LPお問い合わせ('+this.modal.type+')')}&body=${encodeURIComponent(JSON.stringify(payload,null,2))}`;
-      window.location.href=mailto; this.modal.open=false;
-      alert('送信を開始しました。メールソフトが開かない場合はメールでご連絡ください。');
-    },
-    sendQuote(si){
-      const set=this.quoteSets[si];
-      const body={
-        type:'quote',
-        setName:set.name,
-        items:set.items.map(i=>({sku:i.sku,name:i.name,price:i.price,qty:i.qty})),
-        subtotal:this.quoteSubtotal(si),
-        ts:new Date().toISOString()
-      };
-      const mailto=`mailto:${encodeURIComponent(this.data.cta.quoteEmail)}?subject=${encodeURIComponent('見積依頼 '+set.name)}&body=${encodeURIComponent(JSON.stringify(body,null,2))}`;
-      window.location.href=mailto;
-    },
-    sendAllQuotes(){
-      const payload={
-        sets:this.quoteSets.map((s,i)=>({
-          name:s.name,
-          items:s.items.map(it=>({sku:it.sku,name:it.name,price:it.price,qty:it.qty})),
-          subtotal:this.quoteSubtotal(i)
-        })),
-        ts:new Date().toISOString()
-      };
-      const mailto=`mailto:${encodeURIComponent(this.data.cta.quoteEmail)}?subject=${encodeURIComponent('見積依頼(複数)')}&body=${encodeURIComponent(JSON.stringify(payload,null,2))}`;
-      window.location.href=mailto;
-    },
-    checkout(){ if(!this.buyCart.length) return alert('カートが空です'); this.ui.checkoutOpen=true },
-    submitOrder(){
-      const order={
-        customer:this.order,
-        items:this.buyCart.map(i=>({sku:i.sku,name:i.name,price:i.price,qty:i.qty})),
-        total:this.buySubtotal(),
-        ts:new Date().toISOString()
-      };
-      const mailto=`mailto:${encodeURIComponent(this.data.cta.orderEmail)}?subject=${encodeURIComponent('注文依頼')}&body=${encodeURIComponent(JSON.stringify(order,null,2))}`;
-      window.location.href=mailto; this.ui.checkoutOpen=false;
+      // ---- buy cart ----
+      openBuyDrawer(){ this.ui.buyOpen=true },
+      addBuy(p){ this.addBuyQty(p,1) },
+      removeBuyItem(i){ this.buyCart.splice(i,1); this.persist() },
+      buySubtotal(){ return this.buyCart.reduce((s,it)=>s+((it.price??0)*(it.qty||1)),0) },
+      buyCount(){ return this.buyCart.reduce((n,it)=>n+(it.qty||1),0) },
+
+      // 追加: 数量指定のAdd
+      addQuoteQty(p, qty=1){
+        const q=Math.max(1, Number(qty)||1);
+        const set=this.quoteSets[this.activeQuoteSet];
+        const exist=set.items.find(it=>it.sku===p.sku);
+        if(exist){ exist.qty=(exist.qty||1)+q } else { set.items.push({...p, qty:q}) }
+        this.persist(); alert('見積もりカートに追加しました！');
+      },
+      addBuyQty(p, qty=1){
+        const q=Math.max(1, Number(qty)||1);
+        const ex=this.buyCart.find(it=>it.sku===p.sku);
+        if(ex){ ex.qty=(ex.qty||1)+q } else { this.buyCart.push({...p, qty:q}) }
+        this.persist(); this.ui.buyOpen=true
+      },
+
+      // ---- lead & order ----
+      openLead(type, product){
+        this.modal.type=type; this.modal.open=true;
+        this.form={salon:'', name:'', email:'', tel:'', note:'', product:product||''};
+        this.modal.title= type==='quote'? '無料見積もり':'資料請求';
+        this.modal.desc=  type==='quote'? '2分で完了。担当者から最短当日中にご連絡します。':'最新カタログをメールでお送りします。';
+      },
+      submitLead(){
+        const payload={...this.form, type:this.modal.type, ts:new Date().toISOString()};
+        const mailto=`mailto:${encodeURIComponent(this.data.cta.quoteEmail)}?subject=${encodeURIComponent('LPお問い合わせ('+this.modal.type+')')}&body=${encodeURIComponent(JSON.stringify(payload,null,2))}`;
+        window.location.href=mailto; this.modal.open=false;
+        alert('送信を開始しました。メールソフトが開かない場合はメールでご連絡ください。');
+      },
+      sendQuote(si){
+        const set=this.quoteSets[si];
+        const body={ type:'quote', setName:set.name, items:set.items.map(i=>({sku:i.sku,name:i.name,price:i.price,qty:i.qty})), subtotal:this.quoteSubtotal(si), ts:new Date().toISOString() };
+        const mailto=`mailto:${encodeURIComponent(this.data.cta.quoteEmail)}?subject=${encodeURIComponent('見積依頼 '+set.name)}&body=${encodeURIComponent(JSON.stringify(body,null,2))}`;
+        window.location.href=mailto;
+      },
+      sendAllQuotes(){
+        const payload={ sets:this.quoteSets.map((s,i)=>({ name:s.name, items:s.items.map(it=>({sku:it.sku,name:it.name,price:it.price,qty:it.qty})), subtotal:this.quoteSubtotal(i) })), ts:new Date().toISOString() };
+        const mailto=`mailto:${encodeURIComponent(this.data.cta.quoteEmail)}?subject=${encodeURIComponent('見積依頼(複数)')}&body=${encodeURIComponent(JSON.stringify(payload,null,2))}`;
+        window.location.href=mailto;
+      },
+      checkout(){ if(!this.buyCart.length) return alert('カートが空です'); this.ui.checkoutOpen=true },
+      submitOrder(){
+        const order={ customer:this.order, items:this.buyCart.map(i=>({sku:i.sku,name:i.name,price:i.price,qty:i.qty})), total:this.buySubtotal(), ts:new Date().toISOString() };
+        const mailto=`mailto:${encodeURIComponent(this.data.cta.orderEmail)}?subject=${encodeURIComponent('注文依頼')}&body=${encodeURIComponent(JSON.stringify(order,null,2))}`;
+        window.location.href=mailto; this.ui.checkoutOpen=false;
+      },
+
+      snapProgress(){
+        const steps=[0,25,50,75,100];
+        const val=this.progress; let nearest=steps[0];
+        for(const s of steps){ if(Math.abs(s-val) < Math.abs(nearest-val)) nearest=s }
+        this.progress=nearest;
+      }
     }
   }
-}
   </script>
 </body>
 </html>
