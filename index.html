@@ -9,20 +9,12 @@
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&display=swap');
-    /* ===== White & Gold Theme ===== */
     :root{
-      --bg:#faf9f6;
-      --panel:rgba(255,255,255,.6);
-      --ink:#2b2b2b;
-      --muted:#6b7280;
-      --line:rgba(0,0,0,.06);
-      --accent:#d6b25e;
-      --accent2:#f3d98c;
-      --shadow:0 20px 40px -20px rgba(0,0,0,.15);
+      --bg:#faf9f6; --panel:rgba(255,255,255,.6); --ink:#2b2b2b; --muted:#6b7280;
+      --line:rgba(0,0,0,.06); --accent:#d6b25e; --accent2:#f3d98c; --shadow:0 20px 40px -20px rgba(0,0,0,.15);
       --ease:cubic-bezier(.2,.7,.2,1);
     }
-    html,body{background:var(--bg); color:var(--ink)}
-    html{scroll-behavior:smooth}
+    html,body{background:var(--bg); color:var(--ink)} html{scroll-behavior:smooth}
 
     .glass{backdrop-filter: blur(10px); background:var(--panel); border:1px solid rgba(255,255,255,.6); box-shadow:var(--shadow)}
     .btn{background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#000; font-weight:700; transition:transform .2s var(--ease), box-shadow .3s; box-shadow:0 10px 20px -10px rgba(214,178,94,.55)}
@@ -32,25 +24,28 @@
     .divider{height:1px; background:linear-gradient(90deg,transparent,var(--line),transparent)}
     .progress{position:fixed;top:0;left:0;height:3px;width:calc(var(--scroll,0)*1%);background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:60}
 
-    /* Hero visual */
-    .hero-grad{background:linear-gradient(to bottom,#fffbea,#fff5e1,#faf9f6);position:relative}
-    .hero-dust::before,.hero-dust::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,rgba(255,255,255,.3) 1px,transparent 2px),radial-gradient(circle,rgba(214,178,94,.2) 1px,transparent 3px);background-size:200px 200px,300px 300px;animation:dustMove 60s linear infinite}
+    /* Hero */
+    .hero-grad{background:linear-gradient(to bottom,#0a0a0a,#101010 35%,#111214 65%,#121315);position:relative}
+    .hero-dust::before,.hero-dust::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:
+      radial-gradient(circle,rgba(255,255,255,.18) 1px,transparent 2px),
+      radial-gradient(circle,rgba(214,178,94,.12) 1px,transparent 3px);
+      background-size:200px 200px,320px 320px;animation:dustMove 60s linear infinite}
     .hero-dust::after{animation-direction:reverse;opacity:.7}
     @keyframes dustMove{from{background-position:0 0,0 0}to{background-position:400px 600px,-300px -500px}}
 
-    /* Background slideshow (Ken Burns) */
+    /* Background slideshow */
     .slide{position:absolute; inset:0; opacity:0; transition:opacity 1s var(--ease)}
     .slide.is-active{opacity:1}
     .ken{width:100%; height:100%; object-fit:cover; transform-origin:center; animation:ken 12s ease-in-out forwards}
-    @keyframes ken{0%{transform:scale(1.05) translateX(0)}100%{transform:scale(1.12) translateX(-2%)}}
+    @keyframes ken{0%{transform:scale(1.05) translateX(0)}100%{transform:scale(1.14) translateX(-3%)}}
 
-    /* Typography embellish */
+    /* Text treatments */
     .serif{font-family:'Noto Serif JP', serif}
-    .gold-text{background:linear-gradient(135deg,#c8a857 0%,#e7c874 40%,#b8923a 60%,#f3dc93 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 1px 0 rgba(255,255,255,.4)}
-    .spark{position:relative}
-    .spark::after{content:'';position:absolute;right:-.2em;top:.15em;width:.6em;height:.6em;background:radial-gradient(circle,rgba(255,255,255,.95) 0,rgba(255,255,255,.6) 35%,rgba(255,255,255,0) 70%);transform:rotate(25deg);filter:blur(.2px)}
+    .gold-text{background:linear-gradient(135deg,#e9d089 0%,#f4dfa4 35%,#d6b25e 60%,#fff3bf 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .text-glow{ text-shadow:0 2px 10px rgba(0,0,0,.55), 0 1px 0 rgba(0,0,0,.6); }
+    .panel-dark{ background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.42)); border:1px solid rgba(255,255,255,.16); backdrop-filter: blur(10px); box-shadow:0 20px 50px -25px rgba(0,0,0,.55) }
 
-    /* Reveal */
+    /* Reveal & cards */
     .reveal{opacity:0;transform:translateY(14px) scale(.98)}
     .reveal.is-visible{opacity:1;transform:none;transition:transform .8s var(--ease),opacity .8s var(--ease);transition-delay:var(--d,0ms)}
     .card-hover{transition:transform .45s var(--ease),box-shadow .45s var(--ease)}
@@ -59,15 +54,10 @@
     .card-hover:hover .img-zoom{transform:scale(1.03)}
     @media (prefers-reduced-motion: reduce){.reveal,.reveal.is-visible,.card-hover,.img-zoom,.btn,.ken{transition:none!important;animation:none!important}}
 
-    /* Image tags on photos */
-    .tag-on-img{background:rgba(255,255,255,.85);border-color:rgba(0,0,0,.06);color:#1f2937;text-shadow:none;backdrop-filter:saturate(120%) blur(2px)}
+    /* Chips on images */
+    .tag-on-img{background:rgba(255,255,255,.85);border-color:rgba(0,0,0,.06);color:#1f2937;backdrop-filter:saturate(120%) blur(2px)}
     .media-scrim::before{content:""; position:absolute; inset:0; background: radial-gradient(220px 120px at 1rem 1rem, rgba(0,0,0,.10), transparent 65%); pointer-events:none; border-radius: inherit}
-
-    /* Header */
     header .glass{background:rgba(255,255,255,.6)}
-
-    /* Badges */
-    .badge-emboss{background:radial-gradient(100% 100% at 30% 30%,#f8e9b6 0,#d6b25e 60%,#b48a2f 100%);color:#6b5520;box-shadow:inset 0 2px 6px rgba(255,255,255,.6), inset 0 -6px 12px rgba(0,0,0,.12), 0 6px 16px rgba(0,0,0,.08)}
 
     /* Intro */
     .intro-wrap{position:fixed;inset:0;background:linear-gradient(180deg,#ffffff 0%,#fff8e1 100%);display:grid;place-items:center;z-index:90}
@@ -79,52 +69,60 @@
     @keyframes introPop{0%{opacity:0;transform:translateY(8px) scale(.98);filter:blur(2px)}100%{opacity:1;transform:none;filter:none}}
     @keyframes ringSpin{to{transform:rotate(360deg)}}
 
-    /* Masonry for 導入実績 */
+    /* Masonry */
     .masonry{column-count:1;column-gap:1rem}
     @media(min-width:768px){.masonry{column-count:2}}
     @media(min-width:1024px){.masonry{column-count:3}}
     .masonry>article{break-inside:avoid;margin-bottom:1rem;opacity:0;transform:translateY(12px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
     .masonry>article.is-visible{opacity:1;transform:none}
+
+    /* —— Premium comparison table —— */
+    .cmp-wrap{box-shadow:0 30px 60px -30px rgba(0,0,0,.25)}
+    .cmp-head{background:linear-gradient(135deg, rgba(214,178,94,.85), rgba(243,217,140,.9)); color:#1a1a1a}
+    .cmp-cell{background:rgba(255,255,255,.7)}
+    .cmp-row{transition:background .35s var(--ease)}
+    .cmp-row:hover{background:rgba(214,178,94,.08)}
+    .pill{display:inline-flex;align-items:center;gap:.35rem;font-size:.75rem;line-height:1;border:1px solid rgba(0,0,0,.08);border-radius:9999px;padding:.35rem .6rem;background:#fff}
+    .pill.ok{border-color:#05966933}
+    .pill.no{border-color:#dc262633}
+    .star{font-size:1rem;filter:drop-shadow(0 1px 0 rgba(255,255,255,.5))}
   </style>
 </head>
 <body class="antialiased selection:bg-yellow-300/30 selection:text-black">
-  <!-- Intro（そのまま） -->
+  <!-- Intro -->
   <div x-show="ui.introVisible" x-transition.opacity.duration.700ms class="intro-wrap" aria-live="polite">
     <div class="intro-card">
       <div class="intro-ring"></div>
       <img :src="data.brand.logo" alt="brand" class="h-8 md:h-10 mx-auto mb-2"/>
-      <div class="intro-title gold-text spark text-[40px] md:text-[76px] font-black leading-[1.02]">Photomedicell</div>
+      <div class="intro-title gold-text text-[40px] md:text-[76px] font-black leading-[1.02]">Photomedicell</div>
       <div class="intro-brand text-xs md:text-sm">フォトメディセル</div>
     </div>
   </div>
 
   <div class="progress"></div>
 
-  <!-- ===== Sticky Header ===== -->
+  <!-- Header -->
   <header class="fixed top-0 inset-x-0 z-40">
     <div class="mx-auto max-w-7xl px-4">
       <div class="mt-4 mb-3 glass rounded-2xl px-4 py-3 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <!-- 左上ロゴ（画像差し替え可） -->
           <img :src="data.brand.logo" alt="logo" class="w-28 h-10 object-contain"/>
           <span class="sr-only" x-text="data.brand.tagline"></span>
         </div>
-        <nav class="hidden md:flex items-center gap-6 text-sm text-[#4b5563]">
-          <a href="#products" class="hover:text-black">製品</a>
-          <a href="#case" class="hover:text-black">導入実績</a>
-          <a href="#value" class="hover:text-black">選ばれる理由</a>
-          <a href="#compare" class="hover:text-black">比較</a>
-          <a href="#results" class="hover:text-black">実績データ</a>
-          <a href="#faq" class="hover:text-black">FAQ</a>
+        <nav class="hidden md:flex items-center gap-6 text-sm text-[#d1d5db]">
+          <a href="#products" class="hover:text-white">製品</a>
+          <a href="#case" class="hover:text-white">導入実績</a>
+          <a href="#value" class="hover:text-white">選ばれる理由</a>
+          <a href="#compare" class="hover:text-white">比較</a>
+          <a href="#results" class="hover:text-white">実績データ</a>
+          <a href="#faq" class="hover:text-white">FAQ</a>
         </nav>
         <div class="flex items-center gap-2">
-          <button @click="openQuoteDrawer()" class="relative tag px-3 py-2 rounded-xl text-sm hover:bg-[var(--accent2)]/30">
-            見積カート
-            <span class="absolute -right-2 -top-2 bg-[var(--accent)] text-black text-xs rounded-full px-1.5 badge" x-text="quoteCount()"></span>
+          <button @click="openQuoteDrawer()" class="relative tag px-3 py-2 rounded-xl text-sm hover:bg-[var(--accent2)]/30">見積カート
+            <span class="absolute -right-2 -top-2 bg-[var(--accent)] text-black text-xs rounded-full px-1.5" x-text="quoteCount()"></span>
           </button>
-          <button @click="openBuyDrawer()" class="relative tag px-3 py-2 rounded-xl text-sm hover:bg-[var(--accent2)]/30">
-            購入カート
-            <span class="absolute -right-2 -top-2 bg-emerald-400 text-black text-xs rounded-full px-1.5 badge" x-text="buyCount()"></span>
+          <button @click="openBuyDrawer()" class="relative tag px-3 py-2 rounded-xl text-sm hover:bg-[var(--accent2)]/30">購入カート
+            <span class="absolute -right-2 -top-2 bg-emerald-400 text-black text-xs rounded-full px-1.5" x-text="buyCount()"></span>
           </button>
           <a :href="data.cta.line" class="btn inline-flex items-center gap-2 hover:opacity-90 px-4 py-2 rounded-xl">LINEで問い合わせ</a>
         </div>
@@ -132,50 +130,51 @@
     </div>
   </header>
 
-  <!-- ===== HERO（背景スライド＋上にテキスト） ===== -->
+  <!-- HERO -->
   <section class="relative hero-grad hero-dust pt-[84px] md:pt-[108px]">
     <!-- 背景スライド -->
-    <div class="absolute inset-0 overflow-hidden" x-data="{idx:0,t:null,imgs:data.hero.bg}" x-init="
-         t=setInterval(()=>idx=(idx+1)%imgs.length,5200)
-       " @mouseenter="clearInterval(t)" @mouseleave="t=setInterval(()=>idx=(idx+1)%imgs.length,5200)">
+    <div class="absolute inset-0 overflow-hidden" x-data="{idx:0,t:null,imgs:data.hero.bg}"
+         x-init="t=setInterval(()=>idx=(idx+1)%imgs.length,5200)"
+         @mouseenter="clearInterval(t)" @mouseleave="t=setInterval(()=>idx=(idx+1)%imgs.length,5200)">
       <template x-for="(src,i) in imgs" :key="src">
         <div class="slide" :class="{'is-active': idx===i}">
           <img :src="src" alt="hero background sample" class="ken" />
         </div>
       </template>
-      <!-- 視認性オーバーレイ -->
-      <div class="absolute inset-0 bg-gradient-to-b from-black/45 via-black/25 to-transparent md:from-black/35"></div>
-      <!-- SAMPLEバッジ -->
+      <!-- 画面全体の暗幕を強めに -->
+      <div class="absolute inset-0 bg-gradient-to-b from-black/55 via-black/40 to-black/30 md:from-black/45 md:via-black/35 md:to-black/25"></div>
       <div class="absolute left-3 top-3 md:left-6 md:top-6">
         <span class="tag-on-img inline-block text-[10px] md:text-xs px-2 py-1 rounded-md tracking-wide">SAMPLE IMAGES</span>
       </div>
     </div>
 
-    <!-- コンテンツ -->
+    <!-- テキストパネル（暗ガラス） -->
     <div class="relative z-10">
       <div class="mx-auto max-w-7xl px-4">
         <div class="min-h-[70svh] md:min-h-[85svh] flex items-center">
-          <div class="w-full max-w-3xl">
-            <div class="inline-flex items-center gap-2 tag px-3 py-2 rounded-xl text-xs text-white/90 bg-white/10 border-white/30 backdrop-blur">
+          <div class="w-full max-w-3xl panel-dark rounded-3xl p-5 md:p-8">
+            <div class="inline-flex items-center gap-2 tag px-3 py-2 rounded-xl text-xs text-white/90 border-white/20 bg-white/10 backdrop-blur">
               <span>サロン導入台数 <strong x-text="data.hero.stats.units"></strong> 台突破</span>
               <span class="mx-1">•</span>
               <span>平均回収 <strong x-text="data.hero.stats.roi"></strong> ヶ月</span>
             </div>
 
-            <h1 class="serif leading-[1.04] tracking-tight mt-4">
-              <div class="text-white/95 drop-shadow-[0_2px_10px_rgba(0,0,0,.35)] text-[6.2vw] md:text-[42px] font-bold break-keep">効果・差別化・コスパを最大限に追求した、業務用脱毛機。</div>
-              <div class="gold-text spark drop-shadow-[0_2px_10px_rgba(0,0,0,.35)] text-[14vw] md:text-[96px] font-black">Photomedicell</div>
-              <div class="text-white/80 text-[3.8vw] md:text-[16px] mt-1">フォトメディセル</div>
+            <h1 class="serif leading-[1.08] tracking-tight mt-4">
+              <div class="text-white/95 text-glow text-[6.2vw] md:text-[42px] font-bold break-keep">
+                効果・差別化・コスパを最大限に追求した、業務用脱毛機。
+              </div>
+              <div class="gold-text text-glow text-[14vw] md:text-[96px] font-black">Photomedicell</div>
+              <div class="text-white/85 text-[3.8vw] md:text-[16px] mt-1">フォトメディセル</div>
             </h1>
 
-            <p class="mt-4 text-white/90 text-[4.2vw] md:text-lg leading-relaxed max-w-2xl">
+            <p class="mt-4 text-white/92 text-[4.2vw] md:text-lg leading-relaxed max-w-2xl">
               <span x-text="data.hero.lead"></span>
             </p>
 
             <div class="mt-6 flex flex-wrap items-center gap-3">
               <a :href="data.cta.line" class="btn font-semibold px-5 py-3 rounded-2xl">LINEで問い合わせ</a>
-              <button @click="openLead('brochure')" class="tag px-5 py-3 rounded-2xl border-white/50 text-white hover:text-black hover:border-[var(--accent)]">資料請求</button>
-              <a :href="data.cta.tel" class="tag px-4 py-3 rounded-2xl border-white/50 text-white hover:text-black hover:border-[var(--accent)]">TEL: <span x-text="data.cta.telLabel"></span></a>
+              <button @click="openLead('brochure')" class="tag px-5 py-3 rounded-2xl border-white/30 text-white hover:text-black hover:border-[var(--accent)]">資料請求</button>
+              <a :href="data.cta.tel" class="tag px-4 py-3 rounded-2xl border-white/30 text-white hover:text-black hover:border-[var(--accent)]">TEL: <span x-text="data.cta.telLabel"></span></a>
             </div>
 
             <div class="mt-4 text-xs text-white/80 space-y-1">
@@ -188,7 +187,7 @@
     </div>
   </section>
 
-  <!-- ===== Products ===== -->
+  <!-- Products -->
   <section id="products" class="py-16">
     <div class="mx-auto max-w-7xl px-4">
       <div class="flex items-end justify-between mb-6">
@@ -240,7 +239,7 @@
                 </label>
                 <button class="btn px-4 py-2 rounded-xl" @click="addQuoteQty(p, qty)">見積カート</button>
                 <button class="tag px-4 py-2 rounded-xl hover:bg-[var(--accent2)]/30" x-show="productTab==='機器'" @click="addBuyQty(p, qty)">購入カート</button>
-                <button class="tag px-4 py-2 rounded-xl" @click="toggle(p)">詳細</button>
+                <button class="tag px-4 py-2 rounded-2xl" @click="toggle(p)">詳細</button>
               </div>
             </div>
 
@@ -258,7 +257,7 @@
     </div>
   </section>
 
-  <!-- ===== 導入実績 ===== -->
+  <!-- 導入実績 -->
   <section id="case" class="py-16">
     <div class="mx-auto max-w-7xl px-4">
       <h2 class="text-3xl md:text-4xl font-extrabold mb-6 reveal" data-reveal>導入実績</h2>
@@ -277,7 +276,7 @@
     </div>
   </section>
 
-  <!-- ===== 選ばれる理由 ===== -->
+  <!-- 選ばれる理由 -->
   <section id="value" class="py-16">
     <div class="mx-auto max-w-7xl px-4 grid md:grid-cols-3 gap-6">
       <div class="md:col-span-1 flex flex-col justify-center">
@@ -295,42 +294,102 @@
     </div>
   </section>
 
-  <!-- ===== 比較 ===== -->
+  <!-- 他社比較（プレミアム仕様） -->
   <section id="compare" class="py-16">
     <div class="mx-auto max-w-7xl px-4">
       <h2 class="text-3xl md:text-4xl font-extrabold mb-6 reveal" data-reveal>他社との詳細比較</h2>
-      <div class="overflow-x-auto glass rounded-3xl">
+
+      <div class="overflow-x-auto rounded-3xl cmp-wrap">
         <table class="min-w-full text-sm">
-          <thead>
-            <tr class="text-left text-[#374151]">
-              <th class="p-4">製品名</th>
+          <thead class="cmp-head">
+            <tr class="text-left">
+              <th class="p-4 rounded-tl-3xl">製品名</th>
               <th class="p-4">価格</th>
               <th class="p-4">方式/出力</th>
               <th class="p-4">冷却</th>
               <th class="p-4">周波数</th>
               <th class="p-4">保証・サポート</th>
               <th class="p-4">ランニング</th>
+              <th class="p-4 rounded-tr-3xl">総合</th>
             </tr>
           </thead>
           <tbody>
+            <!-- 自社行（ハイライト） -->
             <template x-for="row in data.compare" :key="row.name">
-              <tr class="border-t" style="border-color:var(--line)">
-                <td class="p-4 font-medium" x-text="row.name"></td>
-                <td class="p-4" x-text="row.price"></td>
-                <td class="p-4" x-text="row.func"></td>
-                <td class="p-4" x-text="row.cooling"></td>
-                <td class="p-4" x-text="row.freq"></td>
-                <td class="p-4" x-text="row.support"></td>
-                <td class="p-4" x-text="row.running"></td>
+              <tr class="cmp-row border-t" :class="{'bg-white': row.name==='Photomedicell'}" style="border-color:var(--line)">
+                <td class="p-4 font-semibold">
+                  <div class="flex items-center gap-2">
+                    <span x-text="row.name"></span>
+                    <span x-show="row.name==='Photomedicell'" class="pill ok">おすすめ</span>
+                  </div>
+                </td>
+                <td class="p-4 cmp-cell" x-text="row.price"></td>
+                <td class="p-4 cmp-cell">
+                  <div class="flex items-center gap-2">
+                    <span x-text="row.func"></span>
+                    <span x-show="row.name==='Photomedicell'" class="pill ok">✓ 高出力</span>
+                  </div>
+                </td>
+                <td class="p-4 cmp-cell">
+                  <div class="flex items-center gap-2">
+                    <span x-text="row.cooling"></span>
+                    <span :class="row.name==='Photomedicell' ? 'pill ok' : 'pill no' " x-text="row.name==='Photomedicell' ? '低温安定' : '要確認'"></span>
+                  </div>
+                </td>
+                <td class="p-4 cmp-cell" x-text="row.freq"></td>
+                <td class="p-4 cmp-cell">
+                  <div class="flex items-center gap-2">
+                    <span x-text="row.support"></span>
+                    <span x-show="row.name==='Photomedicell'" class="pill ok">代替機</span>
+                  </div>
+                </td>
+                <td class="p-4 cmp-cell" x-text="row.running"></td>
+                <td class="p-4 cmp-cell">
+                  <div class="flex items-center gap-1">
+                    <template x-for="i in (row.name==='Photomedicell'?5: (row.name==='他社A'?3:3))" :key="i">
+                      <span class="star">⭐</span>
+                    </template>
+                  </div>
+                </td>
               </tr>
             </template>
           </tbody>
+          <tfoot>
+            <tr class="bg-gradient-to-r from-white to-[#fffaf0]">
+              <td colspan="8" class="p-4 rounded-b-3xl">
+                <div class="flex flex-wrap items-center gap-2 text-xs text-[#374151]">
+                  <span class="pill ok">✓ = 有利</span>
+                  <span class="pill no">× / 要確認 = 劣後</span>
+                  <span class="pill">星は社内ベンチマーク</span>
+                </div>
+              </td>
+            </tr>
+          </tfoot>
         </table>
+      </div>
+
+      <!-- ワンポイント比較カード -->
+      <div class="grid md:grid-cols-3 gap-4 mt-6">
+        <div class="glass rounded-3xl p-5">
+          <div class="text-xs text-[#6b7280] mb-1">出力安定性</div>
+          <div class="text-xl font-bold">大型チラー×サファイア先端</div>
+          <p class="text-sm text-[#374151] mt-1">長時間照射でも温度上昇を抑制し、痛みの少ない運用を実現。</p>
+        </div>
+        <div class="glass rounded-3xl p-5">
+          <div class="text-xs text-[#6b7280] mb-1">サポート</div>
+          <div class="text-xl font-bold">3年保証＋代替機</div>
+          <p class="text-sm text-[#374151] mt-1">ダウン時の機会損失を最小化する体制。</p>
+        </div>
+        <div class="glass rounded-3xl p-5">
+          <div class="text-xs text-[#6b7280] mb-1">TCO</div>
+          <div class="text-xl font-bold">約¥8〜12/ショット</div>
+          <p class="text-sm text-[#374151] mt-1">ランニングコストを抑えて回収を早める設計。</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== 実績KPI ===== -->
+  <!-- 実績KPI -->
   <section id="results" class="py-16">
     <div class="mx-auto max-w-7xl px-4">
       <h2 class="text-3xl md:text-4xl font-extrabold mb-6 reveal" data-reveal>導入後の集客効果と売上実績</h2>
@@ -346,7 +405,7 @@
     </div>
   </section>
 
-  <!-- ===== FAQ ===== -->
+  <!-- FAQ -->
   <section id="faq" class="py-16">
     <div class="mx-auto max-w-7xl px-4">
       <h2 class="text-3xl md:text-4xl font-extrabold mb-6 reveal" data-reveal>よくある質問</h2>
@@ -364,11 +423,11 @@
     </div>
   </section>
 
-  <!-- ===== Bottom CTA ===== -->
+  <!-- Bottom CTA -->
   <div class="fixed bottom-4 inset-x-0 z-40">
     <div class="mx-auto max-w-7xl px-4">
-      <div class="blur-bottom glass rounded-2xl p-3 flex items-center justify-between">
-        <div class="text-sm md:text-base"><strong>LINEで問い合わせ</strong>または<strong>資料請求</strong>は2分で完了。</div>
+      <div class="glass rounded-2xl p-3 flex items-center justify-between">
+        <div class="text-sm md:text-base text-[#111]"><strong>LINEで問い合わせ</strong>または<strong>資料請求</strong>は2分で完了。</div>
         <div class="flex gap-2">
           <a :href="data.cta.line" class="btn text-black font-semibold px-4 py-2 rounded-xl">LINEで問い合わせ</a>
           <button @click="openLead('brochure')" class="tag px-4 py-2 rounded-xl">資料請求</button>
@@ -377,7 +436,7 @@
     </div>
   </div>
 
-  <!-- ===== Drawers & Modals ===== -->
+  <!-- Drawers & Modals -->
   <aside x-show="ui.quoteOpen" x-transition class="fixed inset-y-0 right-0 w-full sm:w-[480px] z-50">
     <div class="absolute inset-0 bg-black/20" @click="ui.quoteOpen=false"></div>
     <div class="relative h-full glass w-full ml-auto p-4 sm:p-6 overflow-y-auto">
@@ -467,7 +526,7 @@
     </div>
   </aside>
 
-  <!-- ===== Lead Modal ===== -->
+  <!-- Lead Modal -->
   <div x-show="modal.open" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/20" @click="modal.open=false"></div>
     <div class="relative w-full max-w-xl glass rounded-3xl p-6">
@@ -490,7 +549,7 @@
     </div>
   </div>
 
-  <!-- ===== Checkout Modal ===== -->
+  <!-- Checkout Modal -->
   <div x-show="ui.checkoutOpen" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/20" @click="ui.checkoutOpen=false"></div>
     <div class="relative w-full max-w-xl glass rounded-3xl p-6">
@@ -508,11 +567,11 @@
           <button class="btn text-black font-semibold px-6 py-3 rounded-2xl">注文を送信</button>
         </div>
       </form>
-      <p class="text-xs text-[#6b7280] mt-3">※ 決済は請求書/銀行振込を想定。StripeやSquareへの切替も可（後で導入可能な作り）。</p>
+      <p class="text-xs text-[#6b7280] mt-3">※ 決済は請求書/銀行振込を想定。StripeやSquareへの切替も可。</p>
     </div>
   </div>
 
-  <!-- ===== Footer ===== -->
+  <!-- Footer -->
   <footer class="pt-20 pb-10">
     <div class="mx-auto max-w-7xl px-4 text-sm text-[#6b7280]">
       <div class="divider mb-6"></div>
@@ -529,7 +588,7 @@
     </div>
   </footer>
 
-  <!-- ===== Data & App Logic ===== -->
+  <!-- Data -->
   <script id="data" type="application/json">
   {
     "meta": {
@@ -556,12 +615,7 @@
         "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1920&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=1920&auto=format&fit=crop"
       ],
-      "images": [
-        "https://images.unsplash.com/photo-1596461404969-9ae70b7b0cd5?q=80&w=1600&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1580584128409-012d1e761a7b?q=80&w=1600&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1556228578-97c28c7b6757?q=80&w=1600&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1601333144085-0c0b13f8b4bc?q=80&w=1600&auto=format&fit=crop"
-      ],
+      "images": [],
       "stats": {"units": "300+", "roi": 6}
     },
     "products": [
@@ -605,10 +659,10 @@
   }
   </script>
 
+  <!-- App -->
   <script>
   function app(){
     return {
-      // ---- state ----
       data:{}, products:[], progress:50, productTab:'機器',
       ui:{quoteOpen:false, buyOpen:false, checkoutOpen:false, introVisible:true},
       modal:{open:false, type:'quote', title:'', desc:''},
@@ -616,7 +670,6 @@
       quoteSets:[], activeQuoteSet:0, buyCart:[],
       order:{name:'', email:'', tel:'', address:'', note:''},
 
-      // ---- helpers ----
       observeReveals(){
         const els = document.querySelectorAll('[data-reveal]');
         const io = new IntersectionObserver((entries)=>{
@@ -627,14 +680,9 @@
       observeMasonry(){
         const cards = document.querySelectorAll('.masonry > article');
         const io = new IntersectionObserver((es)=>{
-          es.forEach(e=>{
-            if(e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); }
-          })
+          es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); } })
         }, {threshold:.15});
-        cards.forEach((c,i)=>{
-          c.style.transitionDelay = (Math.random()*300|0)+'ms';
-          io.observe(c);
-        });
+        cards.forEach((c)=>{ c.style.transitionDelay = (Math.random()*300|0)+'ms'; io.observe(c); });
       },
       onScroll(){
         const h=document.documentElement;
@@ -642,19 +690,16 @@
         document.documentElement.style.setProperty('--scroll', scrolled.toFixed(2));
       },
 
-      // ---- lifecycle ----
       init(){
         try{ this.data = JSON.parse(document.getElementById('data').textContent) }catch(e){ console.error(e) }
         this.products = this.data.products;
 
-        // Intro once per session
         const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const shown = sessionStorage.getItem('introDone') === '1';
         if(prefersReduced || shown){ this.ui.introVisible = false; }
-        else { setTimeout(()=>{ this.ui.introVisible=false; sessionStorage.setItem('introDone','1') }, 1400); }
+        else { setTimeout(()=>{ this.ui.introVisible=false; sessionStorage.setItem('introDone','1') }, 1200); }
         this.$watch('ui.introVisible', v => document.body.classList.toggle('overflow-hidden', v))
 
-        // restore
         const qs = localStorage.getItem('quoteSets');
         const bc = localStorage.getItem('buyCart');
         this.quoteSets = qs ? JSON.parse(qs) : [{id: crypto.randomUUID(), name:'見積A', items:[] }];
@@ -671,12 +716,8 @@
         this.$watch('productTab', () => this.$nextTick(() => this.observeReveals()));
         this.$watch('products',  () => this.$nextTick(() => this.observeReveals()));
       },
-      persist(){
-        localStorage.setItem('quoteSets', JSON.stringify(this.quoteSets));
-        localStorage.setItem('buyCart', JSON.stringify(this.buyCart));
-      },
+      persist(){ localStorage.setItem('quoteSets', JSON.stringify(this.quoteSets)); localStorage.setItem('buyCart', JSON.stringify(this.buyCart)); },
 
-      // ---- view actions ----
       sortBy(t){
         if(t==='priceUp'){ this.products=[...this.products].sort((a,b)=>(a.price??0)-(b.price??0)) }
         else if(t==='priceDown'){ this.products=[...this.products].sort((a,b)=>(b.price??0)-(a.price??0)) }
@@ -685,12 +726,10 @@
       filteredProducts(){ return this.products.filter(p => p.type === this.productTab) },
       toggle(p){ p.open = !p.open },
 
-      // ---- quote cart ----
       openQuoteDrawer(){ this.ui.quoteOpen = true },
       addQuoteSet(){
         this.quoteSets.push({id:crypto.randomUUID(), name:`見積${String.fromCharCode(65+this.quoteSets.length)}`, items:[]});
-        this.activeQuoteSet = this.quoteSets.length - 1;
-        this.persist();
+        this.activeQuoteSet = this.quoteSets.length - 1; this.persist();
       },
       removeQuoteSet(i){
         this.quoteSets.splice(i,1);
@@ -703,14 +742,12 @@
       quoteSubtotal(si){ return this.quoteSets[si].items.reduce((s,it)=>s+((it.price??0)*(it.qty||1)),0) },
       quoteCount(){ return this.quoteSets.reduce((n,s)=>n+s.items.reduce((m,it)=>m+(it.qty||1),0),0) },
 
-      // ---- buy cart ----
       openBuyDrawer(){ this.ui.buyOpen=true },
       addBuy(p){ this.addBuyQty(p,1) },
       removeBuyItem(i){ this.buyCart.splice(i,1); this.persist() },
       buySubtotal(){ return this.buyCart.reduce((s,it)=>s+((it.price??0)*(it.qty||1)),0) },
       buyCount(){ return this.buyCart.reduce((n,it)=>n+(it.qty||1),0) },
 
-      // 追加: 数量指定のAdd
       addQuoteQty(p, qty=1){
         const q=Math.max(1, Number(qty)||1);
         const set=this.quoteSets[this.activeQuoteSet];
@@ -725,7 +762,6 @@
         this.persist(); this.ui.buyOpen=true
       },
 
-      // ---- lead & order ----
       openLead(type, product){
         this.modal.type=type; this.modal.open=true;
         this.form={salon:'', name:'', email:'', tel:'', note:'', product:product||''};
@@ -754,13 +790,6 @@
         const order={ customer:this.order, items:this.buyCart.map(i=>({sku:i.sku,name:i.name,price:i.price,qty:i.qty})), total:this.buySubtotal(), ts:new Date().toISOString() };
         const mailto=`mailto:${encodeURIComponent(this.data.cta.orderEmail)}?subject=${encodeURIComponent('注文依頼')}&body=${encodeURIComponent(JSON.stringify(order,null,2))}`;
         window.location.href=mailto; this.ui.checkoutOpen=false;
-      },
-
-      snapProgress(){
-        const steps=[0,25,50,75,100];
-        const val=this.progress; let nearest=steps[0];
-        for(const s of steps){ if(Math.abs(s-val) < Math.abs(nearest-val)) nearest=s }
-        this.progress=nearest;
       }
     }
   }
